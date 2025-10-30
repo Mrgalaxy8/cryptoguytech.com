@@ -26,6 +26,7 @@ export interface Coin {
   };
 }
 
+// FIX: Added ChatMessage type for the AI Tutor component.
 export interface ChatMessage {
   sender: 'user' | 'ai';
   text: string;

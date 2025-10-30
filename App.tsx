@@ -8,7 +8,6 @@ import { CommunityPage } from './components/CommunityPage';
 import type { Page } from './types';
 import { PageType } from './types';
 import { WhatsAppButton } from './components/WhatsAppButton';
-import { AITutor } from './components/AITutor';
 import { AcademyPage } from './components/AcademyPage';
 import { CourseDetailPage } from './components/CourseDetailPage';
 import { BitcoinCoursePage } from './components/BitcoinCoursePage';
@@ -18,7 +17,6 @@ import { EthereumCoursePage } from './components/EthereumCoursePage';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>(PageType.Home);
-  const [isTutorOpen, setIsTutorOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
 
   const navigate = useCallback((page: Page) => {
@@ -65,13 +63,12 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-sans text-gray-200 transition-colors duration-300">
-      <Header currentPage={currentPage} navigate={navigate} onTutorClick={() => setIsTutorOpen(true)} />
+      <Header currentPage={currentPage} navigate={navigate} />
       <main className="flex-grow">
         {renderPage()}
       </main>
       <Footer />
       <WhatsAppButton />
-      <AITutor isOpen={isTutorOpen} onClose={() => setIsTutorOpen(false)} />
     </div>
   );
 };

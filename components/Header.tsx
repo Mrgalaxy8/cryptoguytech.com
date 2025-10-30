@@ -5,14 +5,7 @@ import { PageType } from '../types';
 interface HeaderProps {
   currentPage: Page;
   navigate: (page: Page) => void;
-  onTutorClick: () => void;
 }
-
-const GeminiIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2.75L13.75 8.25L19.25 10L13.75 11.75L12 17.25L10.25 11.75L4.75 10L10.25 8.25L12 2.75Z M12 10.5C11.1716 10.5 10.5 11.1716 10.5 12C10.5 12.8284 11.1716 13.5 12 13.5C12.8284 13.5 13.5 12.8284 13.5 12C13.5 11.1716 12.8284 10.5 12 10.5Z"/>
-    </svg>
-);
 
 const MenuIcon: React.FC<{ className?: string }> = ({ className }) => (
     <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -27,7 +20,7 @@ const CloseIcon: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 
-export const Header: React.FC<HeaderProps> = ({ currentPage, navigate, onTutorClick }) => {
+export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navItems: Page[] = [PageType.Home, PageType.Tracker, PageType.Academy, PageType.Community];
 
@@ -36,16 +29,12 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate, onTutorCl
     setIsMenuOpen(false);
   }
 
-  const handleTutorClick = () => {
-    onTutorClick();
-    setIsMenuOpen(false);
-  }
-
   return (
     <>
       <header className="sticky top-0 z-50 bg-primary-blue/80 backdrop-blur-md shadow-md shadow-primary-green/20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
+            {/* Left Side: Logo */}
             <div className="flex-1 flex justify-start">
                 <div className="flex-shrink-0 cursor-pointer" onClick={() => handleNavClick(PageType.Home)}>
                   <h1 className="text-3xl font-black text-white tracking-tight">
@@ -54,14 +43,14 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate, onTutorCl
                 </div>
             </div>
 
-            {/* Desktop Nav & Tutor Button */}
-            <div className="hidden md:flex items-center gap-10">
+            {/* Center: Desktop Nav */}
+            <div className="hidden md:flex justify-center">
                 <nav className="flex items-center space-x-8">
                   {navItems.map((item) => (
                     <button
                       key={item}
                       onClick={() => handleNavClick(item)}
-                      className={`text-base font-medium transition-colors duration-200 ${
+                      className={`text-base font-semibold transition-colors duration-200 ${
                         currentPage === item
                           ? 'text-primary-green'
                           : 'text-gray-300 hover:text-primary-green'
@@ -71,21 +60,15 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate, onTutorCl
                     </button>
                   ))}
                 </nav>
-
-                <button 
-                    onClick={onTutorClick}
-                    className="flex items-center gap-2 text-base font-medium bg-primary-green/10 hover:bg-primary-green/20 text-primary-green px-4 py-2 rounded-lg transition-colors duration-200"
-                >
-                    <GeminiIcon className="w-5 h-5" />
-                    <span>AI Tutor</span>
-                </button>
             </div>
 
-
-            <div className="md:hidden">
-                <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-300 hover:text-white">
-                    <MenuIcon className="h-8 w-8" />
-                </button>
+            {/* Right Side: Spacer for desktop, Menu button for mobile */}
+            <div className="flex-1 flex justify-end">
+                <div className="md:hidden">
+                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-300 hover:text-white">
+                        <MenuIcon className="h-8 w-8" />
+                    </button>
+                </div>
             </div>
           </div>
         </div>
@@ -117,13 +100,6 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate, onTutorCl
                   {item}
                 </button>
               ))}
-                <button 
-                    onClick={handleTutorClick}
-                    className="flex items-center gap-3 text-2xl font-bold text-gray-300 hover:text-primary-green transition-colors duration-200"
-                >
-                    <GeminiIcon className="w-7 h-7" />
-                    <span>AI Tutor</span>
-                </button>
           </nav>
       </div>
     </>
