@@ -25,9 +25,3 @@ export interface Coin {
     price: number[];
   };
 }
-
-// FIX: Added ChatMessage type for the AI Tutor component.
-export interface ChatMessage {
-  sender: 'user' | 'ai';
-  text: string;
-}
