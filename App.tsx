@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react';
 import { Header } from './components/Header';
 import { HomePage } from './components/HomePage';
 import { CoinTrackerPage } from './components/CoinTrackerPage';
-import { PlaceholderPage } from './components/PlaceholderPage';
 import { Footer } from './components/Footer';
 import { CommunityPage } from './components/CommunityPage';
 import type { Page } from './types';

@@ -5,7 +5,7 @@ interface DetailedPriceChartProps {
     data: number[];
 }
 
-const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
+const CustomTooltip: React.FC<any> = ({ active, payload }) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-dark-card p-2 border border-gray-700 rounded-md text-white text-xs shadow-lg">
