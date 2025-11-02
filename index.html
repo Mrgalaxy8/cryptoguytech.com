@@ -3,7 +3,7 @@
 <html lang="en" class="dark">
   <head>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8Z1ZB63P59"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8-Z1ZB63P59"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -19,6 +19,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         darkMode: 'class',
@@ -67,6 +68,53 @@
       .group:hover .animate-marquee {
         animation-play-state: paused;
       }
+
+      /* Splash Screen Styles */
+      #splash-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #051324;
+        transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+      }
+
+      #splash-screen.fade-out {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      #splash-screen h1 {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: clamp(2rem, 8vw, 5rem); /* Responsive font size */
+        text-align: center;
+        padding: 0 1rem;
+        color: transparent;
+        background: linear-gradient(90deg, #00C853, #2a6fdb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        animation: elegant-bounce-in 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      @keyframes elegant-bounce-in {
+        0% {
+          opacity: 0;
+          transform: scale(0.7);
+        }
+        50% {
+          opacity: 1;
+        }
+        70% {
+          transform: scale(1.05);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
     </style>
   <script type="importmap">
 {
@@ -82,7 +130,29 @@
 </script>
 </head>
   <body class="bg-dark-bg">
+    <div id="splash-screen">
+      <h1>Welcome to CryptoGuyTech</h1>
+    </div>
     <div id="root"></div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const splashScreen = document.getElementById('splash-screen');
+
+        if (splashScreen) {
+          // After 3 seconds, add the fade-out class
+          setTimeout(() => {
+            splashScreen.classList.add('fade-out');
+
+            // After the fade-out animation completes (500ms), 
+            // remove the element from the DOM so it doesn't block page content.
+            setTimeout(() => {
+              splashScreen.remove();
+            }, 500); 
+
+          }, 3000); // Time the splash screen is visible
+        }
+      });
+    </script>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
