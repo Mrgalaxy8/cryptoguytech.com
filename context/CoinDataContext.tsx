@@ -7,52 +7,86 @@ interface CoinDataContextType {
     coins: Coin[];
     isLoading: boolean;
     error: string | null;
-    fetchData: () => Promise<void>;
+    fetchData: () => void; // Expose a simple manual fetch function
 }
 
 export const CoinDataContext = createContext<CoinDataContextType | undefined>(undefined);
 
 export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [coins, setCoins] = useState<Coin[]>([]);
-    const [isLoading, setIsLoading] = useState(true); // Start true for initial load
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchData = useCallback(async (isManualRetry = false) => {
-        if (isManualRetry) {
+    // This core fetching logic is wrapped in a useCallback with an empty dependency array,
+    // making it a stable function. It uses functional state updates to prevent stale state issues.
+    const fetchData = useCallback(async (isManualOrInitial = false) => {
+        if (isManualOrInitial) {
             setIsLoading(true);
-        }
-        // Don't clear previous error on silent background refresh
-        if (isManualRetry || isLoading) {
             setError(null);
         }
-        
+
+        if (!navigator.onLine) {
+            setError("You appear to be offline. Please check your connection.");
+            if (isManualOrInitial) setIsLoading(false);
+            return;
+        }
+
         try {
             const response = await fetch(API_URL);
             if (!response.ok) {
-                throw new Error('Network response was not ok.');
+                const errorText = response.status === 429 
+                    ? 'API rate limit exceeded. Please try again in a minute.' 
+                    : `Network response was not ok (status: ${response.status}).`;
+                throw new Error(errorText);
             }
             const data: Coin[] = await response.json();
             setCoins(data);
-            setError(null); // Clear error on successful fetch
+            setError(null);
         } catch (err) {
             console.error("Failed to fetch coin data:", err);
-            // Only set error if we don't already have data to display
-            if (coins.length === 0) {
-                setError("Could not load market data. The API may be down or rate-limited. Retrying automatically.");
-            }
+            const errorMessage = err instanceof Error && err.message.includes('Failed to fetch') 
+                ? "A network error occurred. Please check your connection and try again."
+                : (err instanceof Error ? err.message : "An unknown error occurred.");
+            
+            // Only set an error if we don't have existing data, or on a manual/initial load.
+            setCoins(currentCoins => {
+                if (currentCoins.length === 0 || isManualOrInitial) {
+                    setError(errorMessage);
+                }
+                return currentCoins; // Keep existing data on background refresh failure
+            });
         } finally {
-            if (isLoading) {
+            if (isManualOrInitial) {
                 setIsLoading(false);
             }
         }
-    }, [isLoading, coins.length]);
+    }, []); // Empty array ensures this function is created only once.
 
+    // This effect manages the initial fetch, background refresh interval, and online/offline events.
     useEffect(() => {
-        fetchData(true); // Initial fetch
-        const interval = setInterval(() => fetchData(false), 60000); // Background refresh
-        return () => clearInterval(interval);
-    }, []);
+        let intervalId: number;
 
+        const handleOnline = () => fetchData(true);
+        const handleOffline = () => setError("You appear to be offline. Please check your connection.");
+
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+
+        // Initial fetch on component mount.
+        fetchData(true);
+
+        // Set up interval for background refreshes.
+        intervalId = window.setInterval(() => fetchData(false), 60000);
+
+        // Cleanup function runs on component unmount.
+        return () => {
+            clearInterval(intervalId);
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
+    }, [fetchData]); // This effect correctly depends on the stable fetchData function.
+
+    // Create a stable function reference for consumers to call for a manual refresh.
     const manualFetch = useCallback(() => fetchData(true), [fetchData]);
 
     const value = useMemo(() => ({ coins, isLoading, error, fetchData: manualFetch }), [coins, isLoading, error, manualFetch]);

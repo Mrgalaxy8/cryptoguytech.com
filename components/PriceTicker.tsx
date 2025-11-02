@@ -7,15 +7,15 @@ export const PriceTicker: React.FC = () => {
     if (isLoading && coins.length === 0) {
         return (
             <div className="bg-primary-blue/90 h-10 flex items-center justify-center">
-                <p className="text-gray-400 text-sm">Loading prices...</p>
+                <p className="text-gray-400 text-sm">Loading market prices...</p>
             </div>
         );
     }
 
     if (error && coins.length === 0) {
         return (
-            <div className="bg-primary-blue/90 h-10 flex items-center justify-center">
-                <p className="text-red-500 text-sm">Could not load prices.</p>
+            <div className="bg-primary-blue/90 h-10 flex items-center justify-center px-4">
+                <p className="text-red-400 text-sm text-center">{error}</p>
             </div>
         );
     }
