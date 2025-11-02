@@ -25,7 +25,7 @@ export const Footer: React.FC = () => {
                             <SocialIcon href="https://x.com/cryptoguy476335">
                                 <XIcon className="w-6 h-6" />
                             </SocialIcon>
-                            <SocialIcon href="https://wa.me/254701476026">
+                            <SocialIcon href="https://chat.whatsapp.com/ENRVqPrrY4yHxSEW9xH6jn">
                                 <WhatsAppIcon className="w-6 h-6" />
                             </SocialIcon>
                         </div>
