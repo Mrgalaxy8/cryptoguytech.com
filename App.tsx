@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Header } from './components/Header';
 import { HomePage } from './components/HomePage';
 import { CoinTrackerPage } from './components/CoinTrackerPage';
@@ -18,6 +18,23 @@ import { CoinDataProvider } from './context/CoinDataContext';
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>(PageType.Home);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
+
+  useEffect(() => {
+    // This effect addresses the common issue on mobile devices where the viewport height
+    // changes when the browser's address bar appears or disappears. By setting a CSS
+    // variable (--vh) to the actual inner window height, we can create a stable layout
+    // that doesn't jump or resize unexpectedly.
+    const setVhProperty = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+
+    window.addEventListener('resize', setVhProperty);
+    setVhProperty(); // Set the value on initial load
+
+    // Cleanup the event listener when the component unmounts
+    return () => window.removeEventListener('resize', setVhProperty);
+  }, []);
 
   const navigate = useCallback((page: Page) => {
     setCurrentPage(page);
@@ -63,7 +80,7 @@ const App: React.FC = () => {
 
   return (
     <CoinDataProvider>
-      <div className="min-h-screen flex flex-col font-sans text-gray-200 transition-colors duration-300">
+      <div className="h-[calc(var(--vh,1vh)*100)] flex flex-col font-sans text-gray-200 transition-colors duration-300 overflow-y-auto">
         <Header currentPage={currentPage} navigate={navigate} />
         <main className="flex-grow">
           {renderPage()}
