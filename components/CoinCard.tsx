@@ -1,6 +1,5 @@
 import React from 'react';
 import type { Coin } from '../types';
-import { PriceChart } from './PriceChart';
 
 interface CoinCardProps {
     coin: Coin;
@@ -29,9 +28,6 @@ export const CoinCard: React.FC<CoinCardProps> = ({ coin, onClick }) => {
                         <p className="text-sm text-gray-500 dark:text-gray-400">{coin.symbol.toUpperCase()}</p>
                     </div>
                 </div>
-                <div className="w-[100px] h-[40px]">
-                    {coin.sparkline_in_7d?.price && <PriceChart data={coin.sparkline_in_7d.price} />}
-                </div>
             </div>
 
             {/* Bottom Section: Stats */}
@@ -47,7 +43,7 @@ export const CoinCard: React.FC<CoinCardProps> = ({ coin, onClick }) => {
                     className={coin.price_change_percentage_24h >= 0 ? 'text-primary-green' : 'text-red-500'}
                 />
                  <Stat 
-                    label="Market Cap"
+                    label="24h Volume"
                     value={`$${(coin.market_cap / 1_000_000_000).toFixed(2)}B`}
                     className="text-gray-900 dark:text-white"
                 />

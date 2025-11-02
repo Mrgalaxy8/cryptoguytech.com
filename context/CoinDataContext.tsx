@@ -1,95 +1,184 @@
-import React, { createContext, useState, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import type { Coin } from '../types';
 
-const API_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true';
+const API_URL = 'https://api.binance.com/api/v3/ticker/24hr';
+const INITIAL_RETRY_DELAY = 60 * 1000; // 1 minute
+const MAX_RETRY_DELAY = 5 * 60 * 1000; // 5 minutes
+const CACHE_KEY = 'coinDataCache';
+const CACHE_EXPIRATION = 5 * 60 * 1000; // 5 minutes
 
 interface CoinDataContextType {
     coins: Coin[];
     isLoading: boolean;
     error: string | null;
-    fetchData: () => void; // Expose a simple manual fetch function
+    fetchData: () => void;
+    lastUpdated: Date | null;
 }
+
+interface CachedData {
+    coins: Coin[];
+    timestamp: number;
+}
+
+const getCachedData = (): CachedData | null => {
+    try {
+        const cachedItem = localStorage.getItem(CACHE_KEY);
+        if (!cachedItem) return null;
+
+        const data: CachedData = JSON.parse(cachedItem);
+        // Check if cache has expired
+        if (new Date().getTime() - data.timestamp > CACHE_EXPIRATION) {
+            localStorage.removeItem(CACHE_KEY);
+            return null;
+        }
+        return data;
+    } catch (e) {
+        console.error("Failed to read or parse cache", e);
+        return null;
+    }
+};
+
+const setCachedData = (coins: Coin[]) => {
+    try {
+        const data: CachedData = {
+            coins,
+            timestamp: new Date().getTime(),
+        };
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    } catch (e) {
+        console.error("Failed to save data to cache", e);
+    }
+};
+
+const coinNameMap: { [key: string]: string } = {
+    BTC: 'Bitcoin', ETH: 'Ethereum', BNB: 'BNB', SOL: 'Solana', XRP: 'XRP',
+    DOGE: 'Dogecoin', TON: 'Toncoin', ADA: 'Cardano', SHIB: 'Shiba Inu', AVAX: 'Avalanche',
+    DOT: 'Polkadot', LINK: 'Chainlink', TRX: 'TRON', BCH: 'Bitcoin Cash', MATIC: 'Polygon',
+    LTC: 'Litecoin', ICP: 'Internet Computer', ETC: 'Ethereum Classic', UNI: 'Uniswap',
+    XLM: 'Stellar', ATOM: 'Cosmos', ARB: 'Arbitrum', RNDR: 'Render', HBAR: 'Hedera',
+    FIL: 'Filecoin'
+};
+
 
 export const CoinDataContext = createContext<CoinDataContextType | undefined>(undefined);
 
 export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [coins, setCoins] = useState<Coin[]>([]);
+    const [coins, setCoins] = useState<Coin[]>(() => getCachedData()?.coins ?? []);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [lastUpdated, setLastUpdated] = useState<Date | null>(() => {
+        const timestamp = getCachedData()?.timestamp;
+        return timestamp ? new Date(timestamp) : null;
+    });
 
-    // This core fetching logic is wrapped in a useCallback with an empty dependency array,
-    // making it a stable function. It uses functional state updates to prevent stale state issues.
+    const timeoutIdRef = useRef<number | null>(null);
+    const retryDelayRef = useRef(INITIAL_RETRY_DELAY);
+
     const fetchData = useCallback(async (isManualOrInitial = false) => {
+        if (timeoutIdRef.current) {
+            clearTimeout(timeoutIdRef.current);
+        }
+
         if (isManualOrInitial) {
             setIsLoading(true);
             setError(null);
         }
 
         if (!navigator.onLine) {
-            setError("You appear to be offline. Please check your connection.");
+            setError("You appear to be offline. Displaying cached data.");
             if (isManualOrInitial) setIsLoading(false);
+            // Schedule a check for when we are back online
+            timeoutIdRef.current = window.setTimeout(() => fetchData(false), retryDelayRef.current);
             return;
         }
 
         try {
             const response = await fetch(API_URL);
             if (!response.ok) {
-                const errorText = response.status === 429 
-                    ? 'API rate limit exceeded. Please try again in a minute.' 
-                    : `Network response was not ok (status: ${response.status}).`;
+                let errorText = `API Error (status: ${response.status}). Retrying...`;
+                if (response.status === 429) {
+                    errorText = 'API rate limit exceeded. Retrying...';
+                }
                 throw new Error(errorText);
             }
-            const data: Coin[] = await response.json();
-            setCoins(data);
+            const data: any[] = await response.json();
+            
+            const usdtPairs = data.filter(d => d.symbol.endsWith('USDT') && !d.symbol.match(/UP|DOWN|BEAR|BULL/));
+
+            const mappedCoins: Coin[] = usdtPairs.map(d => {
+                const baseAsset = d.symbol.replace('USDT', '');
+                return {
+                    id: d.symbol,
+                    symbol: baseAsset,
+                    name: coinNameMap[baseAsset] || baseAsset,
+                    image: `https://assets.coincap.io/assets/icons/${baseAsset.toLowerCase()}@2x.png`,
+                    current_price: parseFloat(d.lastPrice),
+                    market_cap: parseFloat(d.quoteVolume), // Using 24h volume instead of market cap
+                    price_change_percentage_24h: parseFloat(d.priceChangePercent),
+                };
+            });
+
+            // Sort by "market cap" (which is now 24h volume) desc by default
+            mappedCoins.sort((a, b) => b.market_cap - a.market_cap);
+            
+            const top100Coins = mappedCoins.slice(0, 100);
+
+            setCoins(top100Coins);
+            const now = new Date();
+            setLastUpdated(now);
+            setCachedData(top100Coins);
             setError(null);
+            retryDelayRef.current = INITIAL_RETRY_DELAY;
         } catch (err) {
             console.error("Failed to fetch coin data:", err);
             const errorMessage = err instanceof Error && err.message.includes('Failed to fetch') 
-                ? "A network error occurred. Please check your connection and try again."
+                ? "Network error. Retrying..."
                 : (err instanceof Error ? err.message : "An unknown error occurred.");
             
-            // Only set an error if we don't have existing data, or on a manual/initial load.
-            setCoins(currentCoins => {
-                if (currentCoins.length === 0 || isManualOrInitial) {
-                    setError(errorMessage);
-                }
-                return currentCoins; // Keep existing data on background refresh failure
-            });
+            setError(errorMessage);
+            
+            // Exponential backoff
+            retryDelayRef.current = Math.min(retryDelayRef.current * 2, MAX_RETRY_DELAY);
         } finally {
             if (isManualOrInitial) {
                 setIsLoading(false);
             }
+            // Schedule the next fetch
+            timeoutIdRef.current = window.setTimeout(() => fetchData(false), retryDelayRef.current);
         }
-    }, []); // Empty array ensures this function is created only once.
+    }, []);
 
-    // This effect manages the initial fetch, background refresh interval, and online/offline events.
     useEffect(() => {
-        let intervalId: number;
-
-        const handleOnline = () => fetchData(true);
-        const handleOffline = () => setError("You appear to be offline. Please check your connection.");
+        const handleOnline = () => {
+            setError(null);
+            retryDelayRef.current = INITIAL_RETRY_DELAY;
+            fetchData(true);
+        };
+        const handleOffline = () => {
+            if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current);
+            setError("You appear to be offline. Displaying cached data.");
+        };
 
         window.addEventListener('online', handleOnline);
         window.addEventListener('offline', handleOffline);
 
-        // Initial fetch on component mount.
         fetchData(true);
 
-        // Set up interval for background refreshes.
-        intervalId = window.setInterval(() => fetchData(false), 60000);
-
-        // Cleanup function runs on component unmount.
         return () => {
-            clearInterval(intervalId);
+            if (timeoutIdRef.current) {
+                clearTimeout(timeoutIdRef.current);
+            }
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
         };
-    }, [fetchData]); // This effect correctly depends on the stable fetchData function.
+    }, [fetchData]);
 
-    // Create a stable function reference for consumers to call for a manual refresh.
-    const manualFetch = useCallback(() => fetchData(true), [fetchData]);
+    const manualFetch = useCallback(() => {
+        retryDelayRef.current = INITIAL_RETRY_DELAY;
+        fetchData(true);
+    }, [fetchData]);
 
-    const value = useMemo(() => ({ coins, isLoading, error, fetchData: manualFetch }), [coins, isLoading, error, manualFetch]);
+    const value = useMemo(() => ({ coins, isLoading, error, fetchData: manualFetch, lastUpdated }), [coins, isLoading, error, manualFetch, lastUpdated]);
 
     return (
         <CoinDataContext.Provider value={value}>

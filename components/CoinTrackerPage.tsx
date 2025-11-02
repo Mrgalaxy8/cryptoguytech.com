@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import type { Coin } from '../types';
-import { PriceChart } from './PriceChart';
 import { CoinDetailModal } from './CoinDetailModal';
 import { CoinCard } from './CoinCard';
 import { useCoinData } from '../hooks/useCoinData';
@@ -9,7 +8,7 @@ import { useCoinData } from '../hooks/useCoinData';
 type FilterMode = 'all' | 'gainers' | 'losers';
 
 export const CoinTrackerPage: React.FC = () => {
-    const { coins, isLoading, error, fetchData } = useCoinData();
+    const { coins, isLoading, error, fetchData, lastUpdated } = useCoinData();
     const [searchTerm, setSearchTerm] = useState('');
     const [sortConfig, setSortConfig] = useState<{ key: keyof Coin, direction: 'asc' | 'desc' } | null>({ key: 'market_cap', direction: 'desc' });
     const [filterMode, setFilterMode] = useState<FilterMode>('all');
@@ -126,17 +125,34 @@ export const CoinTrackerPage: React.FC = () => {
 
         return (
              <tr>
-                <td colSpan={5} className="text-center py-10">
+                <td colSpan={4} className="text-center py-10">
                     {isLoading ? loadingSpinner : error ? errorDisplay : noResultsDisplay}
                 </td>
             </tr>
         )
     }
 
+    const renderStatusMessage = () => {
+        if (!lastUpdated && !error) return "Real-time cryptocurrency market data.";
+
+        const timeString = lastUpdated?.toLocaleTimeString() ?? '';
+        if (error && coins.length > 0) {
+            return (
+                <span className="text-yellow-500">
+                    {timeString && `Last updated: ${timeString}. `}
+                    <span className="font-semibold">{error}</span>
+                </span>
+            );
+        }
+        return `Last updated: ${timeString}. Auto-refreshes periodically.`;
+    }
+
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
             <h1 className="text-3xl sm:text-4xl font-bold text-center mb-2 text-primary-blue dark:text-white">Live Coin Tracker</h1>
-            <p className="text-center text-gray-600 dark:text-gray-400 mb-8">Real-time cryptocurrency market data. Auto-refreshes every 60 seconds.</p>
+            <p className="text-center text-gray-600 dark:text-gray-400 mb-8 h-5 text-sm">
+                {renderStatusMessage()}
+            </p>
             
             <div className="flex justify-center flex-wrap gap-2 md:gap-4 mb-6">
                 {filterButtons.map(({ mode, label }) => (
@@ -185,11 +201,8 @@ export const CoinTrackerPage: React.FC = () => {
                             </th>
                             <th className="hidden md:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                 <button className="flex items-center gap-1 ml-auto hover:text-primary-green" onClick={() => requestSort('market_cap')}>
-                                    Market Cap <span>{getSortIndicator('market_cap')}</span>
+                                    24h Volume <span>{getSortIndicator('market_cap')}</span>
                                 </button>
-                            </th>
-                            <th className="hidden md:table-cell px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                7d Chart
                             </th>
                         </tr>
                     </thead>
@@ -216,11 +229,6 @@ export const CoinTrackerPage: React.FC = () => {
                                    {coin.price_change_percentage_24h?.toFixed(2) ?? 'N/A'}%
                                </td>
                                <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500 dark:text-gray-400">${coin.market_cap.toLocaleString()}</td>
-                                <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
-                                   <div className="flex justify-center">
-                                       {coin.sparkline_in_7d?.price && <PriceChart data={coin.sparkline_in_7d.price} />}
-                                   </div>
-                               </td>
                            </tr>
                        ))}
                     </tbody>

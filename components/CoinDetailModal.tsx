@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import type { Coin } from '../types';
-import { DetailedPriceChart } from './DetailedPriceChart';
 
 interface CoinDetailModalProps {
     coin: Coin;
@@ -63,8 +62,8 @@ export const CoinDetailModal: React.FC<CoinDetailModalProps> = ({ coin, onClose 
                         <p className="text-4xl font-bold text-white mb-4">
                             ${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
                         </p>
-                        <div className="h-64 w-full">
-                           {coin.sparkline_in_7d?.price && <DetailedPriceChart data={coin.sparkline_in_7d.price} />}
+                        <div className="h-64 w-full flex items-center justify-center bg-dark-bg rounded-lg">
+                           <p className="text-gray-500">7-day chart data is not available.</p>
                         </div>
                     </div>
 
@@ -76,7 +75,7 @@ export const CoinDetailModal: React.FC<CoinDetailModalProps> = ({ coin, onClose 
                             className={coin.price_change_percentage_24h >= 0 ? 'text-primary-green' : 'text-red-500'}
                         />
                          <StatCard 
-                            label="Market Cap"
+                            label="24h Volume"
                             value={`$${coin.market_cap.toLocaleString()}`}
                         />
                          <StatCard 

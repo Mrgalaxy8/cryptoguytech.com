@@ -13,6 +13,7 @@ import { BitcoinCoursePage } from './components/BitcoinCoursePage';
 import { VirtualAssetsCoursePage } from './components/VirtualAssetsCoursePage';
 import { EthereumCoursePage } from './components/EthereumCoursePage';
 import { CoinDataProvider } from './context/CoinDataContext';
+import { NetworkStatusBanner } from './components/NetworkStatusBanner';
 
 
 const App: React.FC = () => {
@@ -82,6 +83,7 @@ const App: React.FC = () => {
     <CoinDataProvider>
       <div className="h-[calc(var(--vh,1vh)*100)] flex flex-col font-sans text-gray-200 transition-colors duration-300 overflow-y-auto">
         <Header currentPage={currentPage} navigate={navigate} />
+        <NetworkStatusBanner />
         <main className="flex-grow">
           {renderPage()}
         </main>
