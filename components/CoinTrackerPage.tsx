@@ -1,50 +1,19 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import type { Coin } from '../types';
 import { PriceChart } from './PriceChart';
 import { CoinDetailModal } from './CoinDetailModal';
 import { CoinCard } from './CoinCard';
+import { useCoinData } from '../hooks/useCoinData';
 
-
-const API_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true';
 
 type FilterMode = 'all' | 'gainers' | 'losers';
 
 export const CoinTrackerPage: React.FC = () => {
-    const [coins, setCoins] = useState<Coin[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { coins, isLoading, error, fetchData } = useCoinData();
     const [searchTerm, setSearchTerm] = useState('');
     const [sortConfig, setSortConfig] = useState<{ key: keyof Coin, direction: 'asc' | 'desc' } | null>({ key: 'market_cap', direction: 'desc' });
     const [filterMode, setFilterMode] = useState<FilterMode>('all');
     const [selectedCoin, setSelectedCoin] = useState<Coin | null>(null);
-
-    const fetchData = useCallback(async () => {
-        setError(null);
-        setIsLoading(true);
-        try {
-            const response = await fetch(API_URL);
-            if (!response.ok) {
-                throw new Error(`API request failed with status: ${response.status}`);
-            }
-            const data: Coin[] = await response.json();
-            setCoins(data);
-        } catch (err) {
-            console.error(err);
-            if (err instanceof Error) {
-                setError(`Failed to fetch coin data. The CoinGecko API might be offline or the request is malformed. (${err.message})`);
-            } else {
-                setError("An unknown error occurred while fetching data.");
-            }
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
-
-    useEffect(() => {
-        fetchData(); // Initial fetch
-        const interval = setInterval(fetchData, 60000); // Auto-refresh every 60 seconds
-        return () => clearInterval(interval);
-    }, [fetchData]);
 
     const handleFilterChange = (mode: FilterMode) => {
         setFilterMode(mode);
@@ -132,9 +101,15 @@ export const CoinTrackerPage: React.FC = () => {
             </div>
         );
         const errorDisplay = (
-            <div className="text-red-500">
+            <div className="text-center text-red-500">
                 <p className="font-semibold">Could not load data</p>
-                <p className="text-sm mt-1">{error}</p>
+                <p className="text-sm mt-1 mb-4">{error}</p>
+                <button
+                    onClick={fetchData}
+                    className="px-4 py-2 bg-primary-green text-primary-blue font-semibold rounded-lg shadow-md hover:bg-green-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-dark-bg focus:ring-primary-green"
+                >
+                    Retry
+                </button>
             </div>
         );
         const noResultsDisplay = (
@@ -219,7 +194,7 @@ export const CoinTrackerPage: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                       {(isLoading || error || filteredCoins.length === 0) ? renderLoadingErrorOrEmpty() : filteredCoins.map(coin => (
+                       {(isLoading && coins.length === 0) || (error && coins.length === 0) || (!isLoading && !error && filteredCoins.length === 0) ? renderLoadingErrorOrEmpty() : filteredCoins.map(coin => (
                            <tr 
                              key={coin.id} 
                              className="hover:bg-gray-100 dark:hover:bg-dark-bg transition-colors duration-200 cursor-pointer"
@@ -254,7 +229,7 @@ export const CoinTrackerPage: React.FC = () => {
 
              {/* Mobile Card View */}
             <div className="md:hidden space-y-4">
-                {(isLoading || error || filteredCoins.length === 0) ? renderLoadingErrorOrEmpty(true) : filteredCoins.map(coin => (
+                {(isLoading && coins.length === 0) || (error && coins.length === 0) || (!isLoading && !error && filteredCoins.length === 0) ? renderLoadingErrorOrEmpty(true) : filteredCoins.map(coin => (
                     <CoinCard key={coin.id} coin={coin} onClick={handleRowClick} />
                 ))}
             </div>

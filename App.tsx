@@ -12,6 +12,7 @@ import { CourseDetailPage } from './components/CourseDetailPage';
 import { BitcoinCoursePage } from './components/BitcoinCoursePage';
 import { VirtualAssetsCoursePage } from './components/VirtualAssetsCoursePage';
 import { EthereumCoursePage } from './components/EthereumCoursePage';
+import { CoinDataProvider } from './context/CoinDataContext';
 
 
 const App: React.FC = () => {
@@ -61,14 +62,16 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans text-gray-200 transition-colors duration-300">
-      <Header currentPage={currentPage} navigate={navigate} />
-      <main className="flex-grow">
-        {renderPage()}
-      </main>
-      <Footer />
-      <WhatsAppButton />
-    </div>
+    <CoinDataProvider>
+      <div className="min-h-screen flex flex-col font-sans text-gray-200 transition-colors duration-300">
+        <Header currentPage={currentPage} navigate={navigate} />
+        <main className="flex-grow">
+          {renderPage()}
+        </main>
+        <Footer />
+        <WhatsAppButton />
+      </div>
+    </CoinDataProvider>
   );
 };
 

@@ -1,40 +1,10 @@
-import React, { useState, useEffect } from 'react';
-
-interface TickerCoin {
-    id: string;
-    symbol: string;
-    current_price: number;
-    price_change_percentage_24h: number;
-}
-
-const API_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=25&page=1&sparkline=false';
+import React from 'react';
+import { useCoinData } from '../hooks/useCoinData';
 
 export const PriceTicker: React.FC = () => {
-    const [coins, setCoins] = useState<TickerCoin[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const { coins, isLoading, error } = useCoinData();
 
-    useEffect(() => {
-        const fetchTickerData = async () => {
-            try {
-                const response = await fetch(API_URL);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch ticker data');
-                }
-                const data: TickerCoin[] = await response.json();
-                setCoins(data);
-            } catch (error) {
-                console.error("Error fetching ticker data:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchTickerData();
-        const interval = setInterval(fetchTickerData, 60000); // Refresh every minute
-        return () => clearInterval(interval);
-    }, []);
-
-    if (isLoading) {
+    if (isLoading && coins.length === 0) {
         return (
             <div className="bg-primary-blue/90 h-10 flex items-center justify-center">
                 <p className="text-gray-400 text-sm">Loading prices...</p>
@@ -42,11 +12,21 @@ export const PriceTicker: React.FC = () => {
         );
     }
 
-    if (coins.length === 0) {
-        return null; // Don't render if there's no data
+    if (error && coins.length === 0) {
+        return (
+            <div className="bg-primary-blue/90 h-10 flex items-center justify-center">
+                <p className="text-red-500 text-sm">Could not load prices.</p>
+            </div>
+        );
+    }
+
+    const tickerCoins = coins.slice(0, 25);
+
+    if (tickerCoins.length === 0) {
+        return null; // Don't render if there's no data and no error/loading state
     }
     
-    const tickerItems = [...coins, ...coins]; // Duplicate for seamless loop
+    const tickerItems = [...tickerCoins, ...tickerCoins]; // Duplicate for seamless loop
 
     return (
         <div className="group bg-primary-blue/90 backdrop-blur-sm overflow-hidden whitespace-nowrap relative border-b border-t border-gray-700">
