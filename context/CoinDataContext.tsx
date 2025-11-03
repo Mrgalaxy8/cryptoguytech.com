@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import type { Coin } from '../types';
 
-const API_URL = 'https://api.binance.com/api/v3/ticker/24hr';
+const API_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true';
 const INITIAL_RETRY_DELAY = 60 * 1000; // 1 minute
 const MAX_RETRY_DELAY = 5 * 60 * 1000; // 5 minutes
 const CACHE_KEY = 'coinDataCache';
@@ -50,16 +50,6 @@ const setCachedData = (coins: Coin[]) => {
     }
 };
 
-const coinNameMap: { [key: string]: string } = {
-    BTC: 'Bitcoin', ETH: 'Ethereum', BNB: 'BNB', SOL: 'Solana', XRP: 'XRP',
-    DOGE: 'Dogecoin', TON: 'Toncoin', ADA: 'Cardano', SHIB: 'Shiba Inu', AVAX: 'Avalanche',
-    DOT: 'Polkadot', LINK: 'Chainlink', TRX: 'TRON', BCH: 'Bitcoin Cash', MATIC: 'Polygon',
-    LTC: 'Litecoin', ICP: 'Internet Computer', ETC: 'Ethereum Classic', UNI: 'Uniswap',
-    XLM: 'Stellar', ATOM: 'Cosmos', ARB: 'Arbitrum', RNDR: 'Render', HBAR: 'Hedera',
-    FIL: 'Filecoin'
-};
-
-
 export const CoinDataContext = createContext<CoinDataContextType | undefined>(undefined);
 
 export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -96,37 +86,19 @@ export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             const response = await fetch(API_URL);
             if (!response.ok) {
                 let errorText = `API Error (status: ${response.status}). Retrying...`;
-                if (response.status === 429) {
+                 if (response.status === 401) {
+                    errorText = 'API key is invalid. Using public API.';
+                } else if (response.status === 429) {
                     errorText = 'API rate limit exceeded. Retrying...';
                 }
                 throw new Error(errorText);
             }
-            const data: any[] = await response.json();
+            const data: Coin[] = await response.json();
             
-            const usdtPairs = data.filter(d => d.symbol.endsWith('USDT') && !d.symbol.match(/UP|DOWN|BEAR|BULL/));
-
-            const mappedCoins: Coin[] = usdtPairs.map(d => {
-                const baseAsset = d.symbol.replace('USDT', '');
-                return {
-                    id: d.symbol,
-                    symbol: baseAsset,
-                    name: coinNameMap[baseAsset] || baseAsset,
-                    image: `https://assets.coincap.io/assets/icons/${baseAsset.toLowerCase()}@2x.png`,
-                    current_price: parseFloat(d.lastPrice),
-                    market_cap: parseFloat(d.quoteVolume), // Using 24h volume instead of market cap
-                    price_change_percentage_24h: parseFloat(d.priceChangePercent),
-                };
-            });
-
-            // Sort by "market cap" (which is now 24h volume) desc by default
-            mappedCoins.sort((a, b) => b.market_cap - a.market_cap);
-            
-            const top100Coins = mappedCoins.slice(0, 100);
-
-            setCoins(top100Coins);
+            setCoins(data);
             const now = new Date();
             setLastUpdated(now);
-            setCachedData(top100Coins);
+            setCachedData(data);
             setError(null);
             retryDelayRef.current = INITIAL_RETRY_DELAY;
         } catch (err) {

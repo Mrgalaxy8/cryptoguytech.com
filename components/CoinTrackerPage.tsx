@@ -3,6 +3,7 @@ import type { Coin } from '../types';
 import { CoinDetailModal } from './CoinDetailModal';
 import { CoinCard } from './CoinCard';
 import { useCoinData } from '../hooks/useCoinData';
+import { PriceChart } from './PriceChart';
 
 
 type FilterMode = 'all' | 'gainers' | 'losers';
@@ -28,10 +29,10 @@ export const CoinTrackerPage: React.FC = () => {
     const baseFilteredCoins = useMemo(() => {
         if (!coins) return [];
         if (filterMode === 'gainers') {
-            return coins.filter(c => c.price_change_percentage_24h >= 0);
+            return coins.filter(c => (c.price_change_percentage_24h ?? 0) >= 0);
         }
         if (filterMode === 'losers') {
-            return coins.filter(c => c.price_change_percentage_24h < 0);
+            return coins.filter(c => (c.price_change_percentage_24h ?? 0) < 0);
         }
         return coins;
     }, [coins, filterMode]);
@@ -125,7 +126,7 @@ export const CoinTrackerPage: React.FC = () => {
 
         return (
              <tr>
-                <td colSpan={4} className="text-center py-10">
+                <td colSpan={5} className="text-center py-10">
                     {isLoading ? loadingSpinner : error ? errorDisplay : noResultsDisplay}
                 </td>
             </tr>
@@ -201,8 +202,11 @@ export const CoinTrackerPage: React.FC = () => {
                             </th>
                             <th className="hidden md:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                 <button className="flex items-center gap-1 ml-auto hover:text-primary-green" onClick={() => requestSort('market_cap')}>
-                                    24h Volume <span>{getSortIndicator('market_cap')}</span>
+                                    Market Cap <span>{getSortIndicator('market_cap')}</span>
                                 </button>
+                            </th>
+                            <th className="hidden lg:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                7d Chart
                             </th>
                         </tr>
                     </thead>
@@ -225,10 +229,13 @@ export const CoinTrackerPage: React.FC = () => {
                                    </div>
                                </td>
                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</td>
-                               <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-medium ${coin.price_change_percentage_24h >= 0 ? 'text-primary-green' : 'text-red-500'}`}>
+                               <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-medium ${(coin.price_change_percentage_24h ?? 0) >= 0 ? 'text-primary-green' : 'text-red-500'}`}>
                                    {coin.price_change_percentage_24h?.toFixed(2) ?? 'N/A'}%
                                </td>
-                               <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500 dark:text-gray-400">${coin.market_cap.toLocaleString()}</td>
+                               <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500 dark:text-gray-400">{coin.market_cap ? `$${coin.market_cap.toLocaleString()}`: 'N/A'}</td>
+                               <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-right">
+                                   <PriceChart data={coin.sparkline_in_7d?.price} />
+                               </td>
                            </tr>
                        ))}
                     </tbody>

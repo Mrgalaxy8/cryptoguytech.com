@@ -35,8 +35,8 @@ export const PriceTicker: React.FC = () => {
                     <div key={`${coin.id}-${index}`} className="flex items-center space-x-2 px-6 py-2 text-sm border-r border-gray-700">
                         <span className="font-bold text-white">{coin.symbol.toUpperCase()}</span>
                         <span className="text-gray-300">${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</span>
-                        <span className={coin.price_change_percentage_24h >= 0 ? 'text-primary-green' : 'text-red-500'}>
-                            {coin.price_change_percentage_24h.toFixed(2)}%
+                        <span className={(coin.price_change_percentage_24h ?? 0) >= 0 ? 'text-primary-green' : 'text-red-500'}>
+                            {coin.price_change_percentage_24h?.toFixed(2) ?? 'N/A'}%
                         </span>
                     </div>
                 ))}

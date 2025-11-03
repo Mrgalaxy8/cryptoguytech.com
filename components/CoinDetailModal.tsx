@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import type { Coin } from '../types';
+import { DetailedPriceChart } from './DetailedPriceChart';
 
 interface CoinDetailModalProps {
     coin: Coin;
@@ -62,8 +63,8 @@ export const CoinDetailModal: React.FC<CoinDetailModalProps> = ({ coin, onClose 
                         <p className="text-4xl font-bold text-white mb-4">
                             ${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
                         </p>
-                        <div className="h-64 w-full flex items-center justify-center bg-dark-bg rounded-lg">
-                           <p className="text-gray-500">7-day chart data is not available.</p>
+                        <div className="h-64 w-full bg-dark-bg rounded-lg">
+                           <DetailedPriceChart data={coin.sparkline_in_7d?.price} />
                         </div>
                     </div>
 
@@ -72,11 +73,11 @@ export const CoinDetailModal: React.FC<CoinDetailModalProps> = ({ coin, onClose 
                         <StatCard 
                             label="24h Change"
                             value={`${coin.price_change_percentage_24h?.toFixed(2) ?? 'N/A'}%`}
-                            className={coin.price_change_percentage_24h >= 0 ? 'text-primary-green' : 'text-red-500'}
+                            className={(coin.price_change_percentage_24h ?? 0) >= 0 ? 'text-primary-green' : 'text-red-500'}
                         />
                          <StatCard 
-                            label="24h Volume"
-                            value={`$${coin.market_cap.toLocaleString()}`}
+                            label="Market Cap"
+                            value={coin.market_cap ? `$${coin.market_cap.toLocaleString()}` : 'N/A'}
                         />
                          <StatCard 
                             label="Symbol"
