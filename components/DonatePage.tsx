@@ -35,7 +35,7 @@ const CopyButton: React.FC<{ textToCopy: string, children: React.ReactNode }> = 
 };
 
 const CryptoOption: React.FC<{ name: string; network: string; address: string; }> = ({ name, network, address }) => (
-    <div className="flex flex-col sm:flex-row items-center gap-4 py-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+    <div className="flex flex-col sm:flex-row items-center gap-2 py-2 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
         <div className="flex-grow text-center sm:text-left">
             <p className="font-bold text-gray-800 dark:text-white">{name} <span className="text-xs font-normal text-gray-500 dark:text-gray-400">({network})</span></p>
             <p className="text-xs text-gray-600 dark:text-gray-400 break-all">{address}</p>
@@ -49,35 +49,35 @@ const CryptoOption: React.FC<{ name: string; network: string; address: string; }
 
 export const DonatePage: React.FC = () => {
     return (
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
+        <div className="flex flex-col justify-center h-full container mx-auto px-4 sm:px-6 lg:px-8 py-6 animate-fade-in">
             <div className="text-center">
                 <h1 className="text-3xl sm:text-4xl font-bold text-primary-blue dark:text-white">Support CryptoGuyTECH</h1>
-                <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400">
-                    Your generous contributions help us maintain the platform, create high-quality educational content, and grow our community. Every donation makes a difference!
+                <p className="mt-4 max-w-3xl mx-auto text-lg text-gray-600 dark:text-gray-400">
+                    Your generous contributions help us maintain the platform, create high-quality educational content, and grow our community.
                 </p>
             </div>
 
-            <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
                 {/* PayPal Card */}
-                <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6 sm:p-8 flex flex-col items-center text-center h-full">
+                <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6 flex flex-col items-center text-center">
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Donate with PayPal</h2>
                     <p className="text-gray-500 dark:text-gray-400 mb-6 flex-grow">Click the button below to make a secure donation via PayPal. Your support is greatly appreciated!</p>
                     <a
                         href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=cryptoguytech@gmail.com&item_name=Donation+to+CryptoGuyTECH&currency_code=USD"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-auto w-full max-w-sm inline-block px-8 py-4 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-500 transform hover:-translate-y-1 transition-all duration-300"
+                        className="mt-auto w-full max-w-xs inline-block px-8 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-500 transform hover:-translate-y-1 transition-all duration-300"
                     >
                         Donate Now
                     </a>
                 </div>
 
                 {/* Crypto Card */}
-                <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6 sm:p-8">
+                <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6 flex flex-col">
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-1 text-center">Donate with Crypto</h2>
-                     <p className="text-gray-500 dark:text-gray-400 mb-6 text-center text-sm">Send your contribution to one of the addresses below. Please double-check the network.</p>
+                     <p className="text-gray-500 dark:text-gray-400 mb-4 text-center text-sm">Send your contribution to one of the addresses below. Please double-check the network.</p>
 
-                    <div className="space-y-2">
+                    <div className="flex-grow flex flex-col justify-around">
                         <CryptoOption 
                             name="Bitcoin"
                             network="BTC"
