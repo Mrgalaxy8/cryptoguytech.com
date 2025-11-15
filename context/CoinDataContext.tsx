@@ -82,14 +82,27 @@ export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             return;
         }
 
+        const controller = new AbortController();
+        const fetchTimeout = setTimeout(() => {
+            controller.abort();
+        }, 15000); // 15 second timeout
+
         try {
-            const response = await fetch(API_URL);
+            const response = await fetch(API_URL, {
+                signal: controller.signal,
+                credentials: 'omit', // Explicitly omit credentials
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            clearTimeout(fetchTimeout);
+
             if (!response.ok) {
                 let errorText = `API Error (status: ${response.status}). Retrying...`;
-                 if (response.status === 401) {
-                    errorText = 'API key is invalid. Using public API.';
-                } else if (response.status === 429) {
-                    errorText = 'API rate limit exceeded. Retrying...';
+                if (response.status === 429) {
+                    errorText = 'API rate limit exceeded. Retrying after a longer delay...';
+                    // If rate limited, increase delay significantly for the next retry
+                    retryDelayRef.current = MAX_RETRY_DELAY;
                 }
                 throw new Error(errorText);
             }
@@ -100,17 +113,28 @@ export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             setLastUpdated(now);
             setCachedData(data);
             setError(null);
-            retryDelayRef.current = INITIAL_RETRY_DELAY;
+            retryDelayRef.current = INITIAL_RETRY_DELAY; // Reset delay on success
         } catch (err) {
+            clearTimeout(fetchTimeout); // Clear timeout on error too
             console.error("Failed to fetch coin data:", err);
-            const errorMessage = err instanceof Error && err.message.includes('Failed to fetch') 
-                ? "Network error. Retrying..."
-                : (err instanceof Error ? err.message : "An unknown error occurred.");
+            
+            let errorMessage = "An unknown error occurred while fetching data. Retrying...";
+            if (err instanceof Error) {
+                 if (err.name === 'AbortError') {
+                    errorMessage = "Request timed out. Retrying...";
+                } else if (err.message.includes('Failed to fetch')) {
+                    errorMessage = "Network error. This could be due to a connection issue, an ad-blocker, or API rate-limiting. Retrying...";
+                } else {
+                    errorMessage = err.message;
+                }
+            }
             
             setError(errorMessage);
             
-            // Exponential backoff
-            retryDelayRef.current = Math.min(retryDelayRef.current * 2, MAX_RETRY_DELAY);
+            // If it's not a rate limit error from the response, do exponential backoff
+            if (!(err instanceof Error && err.message.includes('API rate limit exceeded'))) {
+                 retryDelayRef.current = Math.min(retryDelayRef.current * 2, MAX_RETRY_DELAY);
+            }
         } finally {
             if (isManualOrInitial) {
                 setIsLoading(false);

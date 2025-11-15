@@ -181,11 +181,11 @@ export const CoinTrackerPage: React.FC = () => {
             </div>
 
             {/* Desktop Table View */}
-            <div className="hidden md:block overflow-x-auto bg-white dark:bg-dark-card rounded-lg shadow-lg">
+            <div className="hidden md:block bg-white dark:bg-dark-card rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead className="bg-gray-50 dark:bg-primary-blue">
+                    <thead className="sticky top-20 z-20 bg-gray-50 dark:bg-primary-blue">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                            <th className="sticky left-0 z-30 bg-gray-50 dark:bg-primary-blue px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                 <button className="flex items-center gap-1 hover:text-primary-green" onClick={() => requestSort('name')}>
                                     Name <span>{getSortIndicator('name')}</span>
                                 </button>
@@ -214,10 +214,10 @@ export const CoinTrackerPage: React.FC = () => {
                        {(isLoading && coins.length === 0) || (error && coins.length === 0) || (!isLoading && !error && filteredCoins.length === 0) ? renderLoadingErrorOrEmpty() : filteredCoins.map(coin => (
                            <tr 
                              key={coin.id} 
-                             className="hover:bg-gray-100 dark:hover:bg-dark-bg transition-colors duration-200 cursor-pointer"
+                             className="group hover:bg-gray-100 dark:hover:bg-dark-bg transition-colors duration-200 cursor-pointer"
                              onClick={() => handleRowClick(coin)}
                            >
-                               <td className="px-6 py-4 whitespace-nowrap">
+                               <td className="sticky left-0 z-10 bg-white dark:bg-dark-card group-hover:bg-gray-100 dark:group-hover:bg-dark-bg transition-colors duration-200 px-6 py-4 whitespace-nowrap">
                                    <div className="flex items-center">
                                        <div className="flex-shrink-0 h-10 w-10">
                                            <img className="h-10 w-10 rounded-full" src={coin.image} alt={coin.name} />
