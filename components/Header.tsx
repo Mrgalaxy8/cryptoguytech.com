@@ -22,7 +22,7 @@ const CloseIcon: React.FC<{ className?: string }> = ({ className }) => (
 
 export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const navItems: Page[] = [PageType.Home, PageType.Tracker, PageType.Academy, PageType.Community];
+  const navItems: Page[] = [PageType.Home, PageType.Tracker, PageType.Academy, PageType.Community, PageType.Donate];
 
   const handleNavClick = (page: Page) => {
     navigate(page);
@@ -45,20 +45,33 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
 
             {/* Center: Desktop Nav */}
             <div className="hidden md:flex justify-center">
-                <nav className="flex items-center space-x-8">
-                  {navItems.map((item) => (
-                    <button
-                      key={item}
-                      onClick={() => handleNavClick(item)}
-                      className={`text-base font-semibold transition-colors duration-200 ${
-                        currentPage === item
-                          ? 'text-primary-green'
-                          : 'text-gray-300 hover:text-primary-green'
-                      }`}
-                    >
-                      {item}
-                    </button>
-                  ))}
+                <nav className="flex items-center space-x-6 lg:space-x-8">
+                  {navItems.map((item) => {
+                    if (item === PageType.Donate) {
+                        return (
+                             <button
+                                key={item}
+                                onClick={() => handleNavClick(item)}
+                                className={`px-5 py-2 text-base font-bold rounded-lg transition-all duration-300 transform shadow-md hover:shadow-lg hover:-translate-y-0.5 ${currentPage === item ? 'bg-yellow-400 text-primary-blue ring-2 ring-offset-2 ring-offset-primary-blue ring-yellow-400' : 'bg-yellow-500 text-primary-blue hover:bg-yellow-400'}`}
+                            >
+                                {item}
+                            </button>
+                        )
+                    }
+                    return (
+                        <button
+                          key={item}
+                          onClick={() => handleNavClick(item)}
+                          className={`text-base font-semibold transition-colors duration-200 ${
+                            currentPage === item
+                              ? 'text-primary-green'
+                              : 'text-gray-300 hover:text-primary-green'
+                          }`}
+                        >
+                          {item}
+                        </button>
+                      )
+                  })}
                 </nav>
             </div>
 
@@ -87,19 +100,32 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
               </button>
           </div>
           <nav className="flex flex-col items-center justify-center space-y-8 mt-16">
-              {navItems.map((item) => (
-                <button
-                  key={item}
-                  onClick={() => handleNavClick(item)}
-                  className={`text-2xl font-bold transition-colors duration-200 ${
-                    currentPage === item
-                      ? 'text-primary-green'
-                      : 'text-gray-300 hover:text-primary-green'
-                  }`}
-                >
-                  {item}
-                </button>
-              ))}
+              {navItems.map((item) => {
+                 if (item === PageType.Donate) {
+                    return (
+                         <button
+                            key={item}
+                            onClick={() => handleNavClick(item)}
+                            className="w-48 text-center px-8 py-4 text-2xl font-bold rounded-lg transition-all duration-300 bg-yellow-500 text-primary-blue hover:bg-yellow-400 shadow-lg"
+                        >
+                            {item}
+                        </button>
+                    )
+                }
+                return (
+                    <button
+                      key={item}
+                      onClick={() => handleNavClick(item)}
+                      className={`text-2xl font-bold transition-colors duration-200 ${
+                        currentPage === item
+                          ? 'text-primary-green'
+                          : 'text-gray-300 hover:text-primary-green'
+                      }`}
+                    >
+                      {item}
+                    </button>
+                )
+              })}
           </nav>
       </div>
     </>

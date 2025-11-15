@@ -14,6 +14,7 @@ import { VirtualAssetsCoursePage } from './components/VirtualAssetsCoursePage';
 import { EthereumCoursePage } from './components/EthereumCoursePage';
 import { CoinDataProvider } from './context/CoinDataContext';
 import { NetworkStatusBanner } from './components/NetworkStatusBanner';
+import { DonatePage } from './components/DonatePage';
 
 
 const App: React.FC = () => {
@@ -74,6 +75,8 @@ const App: React.FC = () => {
         return <AcademyPage onSelectCourse={handleSelectCourse} />;
       case PageType.Community:
         return <CommunityPage />;
+      case PageType.Donate:
+        return <DonatePage />;
       default:
         return <HomePage navigate={navigate} />;
     }
