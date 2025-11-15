@@ -10,15 +10,15 @@ interface HomePageProps {
 
 export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
   return (
-    <div className="relative">
+    <div className="relative flex flex-col h-full">
       <PriceTicker />
       
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden flex-grow flex items-center justify-center">
           <div className="absolute inset-0 bg-gradient-to-br from-primary-blue via-dark-bg to-primary-blue bg-[200%_200%] animate-background-pan -z-10">
             <div className="absolute inset-0 opacity-10 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
           </div>
           
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 lg:py-48 text-center">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
             <div className="animate-fade-in">
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white">
                     CryptoGuyTECH
