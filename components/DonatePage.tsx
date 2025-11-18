@@ -12,7 +12,7 @@ const CheckIcon: React.FC<{ className?: string }> = ({ className }) => (
     </svg>
 );
 
-const CopyButton: React.FC<{ textToCopy: string; label?: string }> = ({ textToCopy, label }) => {
+const CompactCopyButton: React.FC<{ textToCopy: string }> = ({ textToCopy }) => {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
@@ -25,14 +25,14 @@ const CopyButton: React.FC<{ textToCopy: string; label?: string }> = ({ textToCo
     return (
         <button
             onClick={handleCopy}
-            className={`flex items-center justify-center gap-2 w-full px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-dark-card ${
+            className={`flex-shrink-0 ml-2 p-1.5 rounded-md transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-primary-green ${
                 copied 
                 ? 'bg-primary-green text-primary-blue' 
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
+            title="Copy to clipboard"
         >
-            {copied ? <CheckIcon className="w-3.5 h-3.5" /> : <CopyIcon className="w-3.5 h-3.5" />}
-            <span>{copied ? 'Copied!' : (label || 'Copy')}</span>
+            {copied ? <CheckIcon className="w-4 h-4" /> : <CopyIcon className="w-4 h-4" />}
         </button>
     );
 };
@@ -42,74 +42,74 @@ const DonationCard: React.FC<{
     description: string;
     children: React.ReactNode;
 }> = ({ title, description, children }) => (
-    <div className="bg-white dark:bg-dark-card rounded-xl shadow-lg p-6 flex flex-col items-center text-center border border-gray-100 dark:border-gray-700 transition-transform hover:-translate-y-1 duration-300 h-full">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{title}</h2>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 flex-grow leading-relaxed">{description}</p>
-        <div className="w-full mt-auto">
+    <div className="bg-white dark:bg-dark-card rounded-lg shadow-md p-4 flex flex-col border border-gray-100 dark:border-gray-700 h-full">
+        <div className="text-center mb-3">
+             <h2 className="text-lg font-bold text-gray-900 dark:text-white leading-none">{title}</h2>
+             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{description}</p>
+        </div>
+        <div className="w-full mt-auto space-y-2">
             {children}
         </div>
     </div>
 );
 
 const CryptoAddress: React.FC<{ network: string; address: string }> = ({ network, address }) => (
-    <div className="space-y-1 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700">
-        <p className="font-bold text-xs text-gray-700 dark:text-gray-300 flex items-center justify-between">
-            {network}
-        </p>
-        <div className="flex flex-col gap-2">
-            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 break-all font-mono bg-white dark:bg-dark-bg p-2 rounded border border-gray-200 dark:border-gray-700 select-all">
+    <div className="bg-gray-50 dark:bg-gray-800/30 p-2 rounded border border-gray-100 dark:border-gray-700 text-left">
+        <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-0.5">{network}</p>
+        <div className="flex items-center justify-between">
+            <p className="text-xs font-mono text-gray-800 dark:text-gray-200 break-all leading-tight select-all">
                 {address}
             </p>
-            <CopyButton textToCopy={address} label="Copy Address" />
+            <CompactCopyButton textToCopy={address} />
         </div>
     </div>
 )
 
 export const DonatePage: React.FC = () => {
     return (
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
-            <div className="text-center mb-8">
-                <span className="inline-block py-1 px-3 rounded-full bg-primary-green/10 text-primary-green text-xs font-bold mb-3">
-                    Support Our Mission
+        <div className="container mx-auto px-4 py-4 animate-fade-in max-w-4xl">
+            <div className="text-center mb-4">
+                <span className="inline-block py-0.5 px-2 rounded-full bg-primary-green/10 text-primary-green text-[10px] font-bold mb-1">
+                    Support Us
                 </span>
-                <h1 className="text-3xl sm:text-4xl font-black text-primary-blue dark:text-white tracking-tight mb-3">
-                    Power the Future of Crypto Education
+                <h1 className="text-2xl font-black text-primary-blue dark:text-white tracking-tight mb-1">
+                    Power the Future
                 </h1>
-                <p className="max-w-2xl mx-auto text-base text-gray-600 dark:text-gray-300 leading-relaxed">
-                    CryptoGuyTECH is free for everyone. Your donations directly support server costs and content creation.
+                <p className="max-w-xl mx-auto text-xs text-gray-600 dark:text-gray-300">
+                    CryptoGuyTECH is free. Donations keep it running.
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-stretch">
                 <DonationCard
                     title="PayPal"
-                    description="Quick and secure donation using your PayPal account or credit card."
+                    description="Quick & secure."
                 >
-                    <div className="space-y-3">
-                        <div className="bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700">
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider font-semibold">PayPal Email</p>
-                            <p className="text-sm font-mono text-gray-800 dark:text-gray-200 mb-2 select-all">cryptoguytech@gmail.com</p>
-                            <CopyButton textToCopy="cryptoguytech@gmail.com" label="Copy Email" />
+                    <div className="bg-gray-50 dark:bg-gray-800/30 p-2 rounded border border-gray-100 dark:border-gray-700 text-left">
+                         <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-0.5">PayPal Email</p>
+                         <div className="flex items-center justify-between">
+                            <p className="text-sm font-mono text-gray-800 dark:text-gray-200 select-all truncate">cryptoguytech@gmail.com</p>
+                            <CompactCopyButton textToCopy="cryptoguytech@gmail.com" />
                         </div>
-                        <a
-                            href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=cryptoguytech@gmail.com&item_name=Donation+to+CryptoGuyTECH&currency_code=USD"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block w-full py-2.5 px-4 bg-[#0070BA] hover:bg-[#003087] text-white font-bold rounded-lg shadow-md transition-all duration-300 text-center text-sm"
-                        >
-                            Donate via PayPal
-                        </a>
                     </div>
+                    <a
+                        href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=cryptoguytech@gmail.com&item_name=Donation+to+CryptoGuyTECH&currency_code=USD"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full py-2 px-4 bg-[#0070BA] hover:bg-[#003087] text-white font-bold rounded shadow-sm transition-all duration-300 text-center text-xs sm:text-sm mt-2"
+                    >
+                        Donate via PayPal
+                    </a>
                 </DonationCard>
 
                 <DonationCard
-                    title="Cryptocurrency"
-                    description="Support us directly via blockchain. We accept SOL, ETH, and BTC."
+                    title="Crypto"
+                    description="SOL, ETH, BTC."
                 >
-                    <div className="space-y-3">
-                        <CryptoAddress network="Solana (SOL)" address="9BZCsMtqXdvwvesozEgms8BPvrSN2236ts7TGyocpVkB" />
+                    <div className="space-y-2">
+                        <CryptoAddress network="Solana" address="9BZCsMtqXdvwvesozEgms8BPvrSN2236ts7TGyocpVkB" />
                         <CryptoAddress network="Ethereum (ERC-20)" address="0xa9dd3Ec443A8F4CeDC5fBbeB03F8D7858C4F596D" />
-                        <CryptoAddress network="Bitcoin (BTC)" address="bc1qcvdfs0n56f45jd8s85e9s0jxpj36hywhlvpzws" />
+                        <CryptoAddress network="Bitcoin" address="bc1qcvdfs0n56f45jd8s85e9s0jxpj36hywhlvpzws" />
                     </div>
                 </DonationCard>
             </div>
