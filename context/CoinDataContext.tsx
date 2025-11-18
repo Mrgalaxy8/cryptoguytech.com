@@ -7,6 +7,18 @@ const MAX_RETRY_DELAY = 5 * 60 * 1000; // 5 minutes
 const CACHE_KEY = 'coinDataCache';
 const CACHE_EXPIRATION = 5 * 60 * 1000; // 5 minutes
 
+// Fallback data to ensure the UI is never empty even if the API is completely blocked or down
+const FALLBACK_COINS: Coin[] = [
+    { id: 'bitcoin', symbol: 'btc', name: 'Bitcoin', image: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png', current_price: 64230.50, market_cap: 1200000000000, price_change_percentage_24h: 1.2, sparkline_in_7d: { price: [62000, 63000, 62500, 64000, 63500, 64230] } },
+    { id: 'ethereum', symbol: 'eth', name: 'Ethereum', image: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png', current_price: 3450.12, market_cap: 400000000000, price_change_percentage_24h: -0.5, sparkline_in_7d: { price: [3500, 3480, 3450, 3460, 3440, 3450] } },
+    { id: 'solana', symbol: 'sol', name: 'Solana', image: 'https://assets.coingecko.com/coins/images/4128/large/solana.png', current_price: 145.20, market_cap: 65000000000, price_change_percentage_24h: 5.4, sparkline_in_7d: { price: [130, 135, 138, 140, 142, 145] } },
+    { id: 'binancecoin', symbol: 'bnb', name: 'BNB', image: 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png', current_price: 590.10, market_cap: 87000000000, price_change_percentage_24h: 0.8, sparkline_in_7d: { price: [580, 585, 588, 590, 592, 590] } },
+    { id: 'ripple', symbol: 'xrp', name: 'XRP', image: 'https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png', current_price: 0.62, market_cap: 34000000000, price_change_percentage_24h: -1.2, sparkline_in_7d: { price: [0.64, 0.63, 0.62, 0.61, 0.62, 0.62] } },
+    { id: 'dogecoin', symbol: 'doge', name: 'Dogecoin', image: 'https://assets.coingecko.com/coins/images/5/large/dogecoin.png', current_price: 0.16, market_cap: 23000000000, price_change_percentage_24h: 2.1, sparkline_in_7d: { price: [0.15, 0.155, 0.16, 0.158, 0.16, 0.16] } },
+    { id: 'cardano', symbol: 'ada', name: 'Cardano', image: 'https://assets.coingecko.com/coins/images/975/large/cardano.png', current_price: 0.45, market_cap: 16000000000, price_change_percentage_24h: -0.8, sparkline_in_7d: { price: [0.46, 0.455, 0.45, 0.448, 0.45, 0.45] } },
+    { id: 'avalanche-2', symbol: 'avax', name: 'Avalanche', image: 'https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png', current_price: 35.40, market_cap: 13000000000, price_change_percentage_24h: 3.2, sparkline_in_7d: { price: [32, 33, 34, 35, 34.5, 35.4] } }
+];
+
 interface CoinDataContextType {
     coins: Coin[];
     isLoading: boolean;
@@ -66,7 +78,7 @@ export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const abortControllerRef = useRef<AbortController | null>(null);
 
     const fetchData = useCallback(async (isManualOrInitial = false) => {
-        // Abort any pending request. This is safe to call even if there's no pending request.
+        // Abort any pending request.
         abortControllerRef.current?.abort();
         
         if (timeoutIdRef.current) {
@@ -83,7 +95,10 @@ export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
 
         if (!navigator.onLine) {
-            setError("You appear to be offline. Displaying cached data.");
+            setError("You appear to be offline. Displaying cached or fallback data.");
+            if (coins.length === 0) {
+                setCoins(FALLBACK_COINS);
+            }
             if (isManualOrInitial) setIsLoading(false);
             timeoutIdRef.current = window.setTimeout(() => fetchData(false), retryDelayRef.current);
             return;
@@ -121,23 +136,32 @@ export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
             // Don't treat expected aborts as critical errors.
             if (err instanceof Error && err.name === 'AbortError') {
-                console.log("Fetch was aborted, likely due to a timeout or component cleanup.");
-                // Only set an error if the request was initiated manually or if there isn't a more specific error already.
-                if (isManualOrInitial || !error) {
-                    setError("Request timed out or was cancelled. Retrying...");
+                console.log("Fetch was aborted.");
+                if (isManualOrInitial && !error) {
+                    setError("Request timed out. Retrying...");
                 }
             } else {
                 console.error("Failed to fetch coin data:", err);
                 
-                let errorMessage = "An unknown error occurred while fetching data. Retrying...";
+                let errorMessage = "Unable to fetch live market data.";
                 if (err instanceof Error) {
                      if (err.message.includes('Failed to fetch')) {
-                        errorMessage = "Network error. This could be due to a connection issue, an ad-blocker, or API rate-limiting. Retrying...";
+                        errorMessage = "Network connection issue or API block. Showing fallback data.";
+                    } else if (err.message.includes('rate limit')) {
+                        errorMessage = "API rate limit reached. Showing cached/fallback data.";
                     } else {
                         errorMessage = err.message;
                     }
                 }
                 setError(errorMessage);
+                
+                // Load fallback data if we have absolutely nothing so the app isn't empty
+                setCoins(prevCoins => {
+                    if (prevCoins.length === 0) {
+                        return FALLBACK_COINS;
+                    }
+                    return prevCoins;
+                });
                 
                 if (!(err instanceof Error && err.message.includes('API rate limit exceeded'))) {
                      retryDelayRef.current = Math.min(retryDelayRef.current * 2, MAX_RETRY_DELAY);
@@ -147,12 +171,12 @@ export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             if (isManualOrInitial) {
                 setIsLoading(false);
             }
-            // Schedule the next fetch, but only if the request wasn't aborted by a component unmount/cleanup.
+            // Schedule the next fetch
             if (!signal.aborted) {
                 timeoutIdRef.current = window.setTimeout(() => fetchData(false), retryDelayRef.current);
             }
         }
-    }, [error]); // Dependency on 'error' helps avoid stale closures when deciding to set a new error message.
+    }, [coins.length, error]); 
 
     useEffect(() => {
         const handleOnline = () => {
@@ -162,7 +186,7 @@ export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         };
         const handleOffline = () => {
             if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current);
-            setError("You appear to be offline. Displaying cached data.");
+            setError("You appear to be offline.");
         };
 
         window.addEventListener('online', handleOnline);
@@ -174,12 +198,10 @@ export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             if (timeoutIdRef.current) {
                 clearTimeout(timeoutIdRef.current);
             }
-            // Abort any ongoing fetch request when the component unmounts.
             abortControllerRef.current?.abort();
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
         };
-        // Use a stable reference for fetchData by removing dependencies
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
