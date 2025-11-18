@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTheme } from '../hooks/useTheme';
+import { Theme } from '../types';
 
 interface DetailedPriceChartProps {
     data: number[];
@@ -8,7 +10,7 @@ interface DetailedPriceChartProps {
 const CustomTooltip: React.FC<any> = ({ active, payload }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-dark-card p-2 border border-gray-700 rounded-md text-white text-xs shadow-lg">
+            <div className="bg-white dark:bg-dark-card p-2 border border-gray-200 dark:border-gray-700 rounded-md text-gray-900 dark:text-white text-xs shadow-lg">
                 <p>{`Price: $${payload[0].value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}`}</p>
             </div>
         );
@@ -17,6 +19,8 @@ const CustomTooltip: React.FC<any> = ({ active, payload }) => {
 };
 
 export const DetailedPriceChart: React.FC<DetailedPriceChartProps> = ({ data }) => {
+    const { theme } = useTheme();
+
     if (!data || data.length === 0) {
         return <div className="flex items-center justify-center h-full text-gray-500">No chart data available.</div>;
     }
@@ -45,6 +49,9 @@ export const DetailedPriceChart: React.FC<DetailedPriceChartProps> = ({ data }) 
     const firstPrice = data[0];
     const lastPrice = data[data.length - 1];
     const strokeColor = lastPrice >= firstPrice ? '#00C853' : '#EF4444';
+    const tickColor = theme === Theme.Dark ? '#9ca3af' : '#6b7280';
+    const axisLineColor = theme === Theme.Dark ? '#4b5563' : '#d1d5db';
+    const gridColor = theme === Theme.Dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
 
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -57,22 +64,22 @@ export const DetailedPriceChart: React.FC<DetailedPriceChartProps> = ({ data }) 
                     bottom: 5,
                 }}
             >
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                 <XAxis 
                     dataKey="index" 
                     tickFormatter={tickFormatter}
                     interval={Math.floor(chartData.length / 7)} // Show a tick for each day
-                    tick={{ fill: '#9ca3af', fontSize: 12 }}
-                    axisLine={{ stroke: '#4b5563' }}
-                    tickLine={{ stroke: '#4b5563' }}
+                    tick={{ fill: tickColor, fontSize: 12 }}
+                    axisLine={{ stroke: axisLineColor }}
+                    tickLine={{ stroke: axisLineColor }}
                     padding={{ left: 20, right: 20 }}
                 />
                 <YAxis 
                     domain={['auto', 'auto']}
                     tickFormatter={(value: number) => `$${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}`}
-                    tick={{ fill: '#9ca3af', fontSize: 12 }}
-                    axisLine={{ stroke: '#4b5563' }}
-                    tickLine={{ stroke: '#4b5563' }}
+                    tick={{ fill: tickColor, fontSize: 12 }}
+                    axisLine={{ stroke: axisLineColor }}
+                    tickLine={{ stroke: axisLineColor }}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Line type="monotone" dataKey="price" stroke={strokeColor} strokeWidth={2} dot={false} />

@@ -10,7 +10,7 @@ export const NetworkStatusBanner: React.FC = () => {
     }
 
     return (
-        <div role="alert" className="bg-yellow-500/20 border-b-2 border-yellow-400/30 text-yellow-200 text-center py-2 px-4 text-sm">
+        <div role="alert" className="bg-yellow-100 dark:bg-yellow-500/20 border-b-2 border-yellow-300 dark:border-yellow-400/30 text-yellow-800 dark:text-yellow-200 text-center py-2 px-4 text-sm">
             <p>
                 <span className="font-bold">Connection Issue:</span> {error} Displaying last available data.
             </p>

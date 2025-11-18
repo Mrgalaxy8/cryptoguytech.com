@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import type { Page } from '../types';
-import { PageType } from '../types';
+import { PageType, Theme } from '../types';
+import { useTheme } from '../hooks/useTheme';
+import { MoonIcon, SunIcon } from './icons/ThemeIcons';
 
 interface HeaderProps {
   currentPage: Page;
@@ -22,12 +24,23 @@ const CloseIcon: React.FC<{ className?: string }> = ({ className }) => (
 
 export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
   const navItems: Page[] = [PageType.Home, PageType.Tracker, PageType.Academy, PageType.Community, PageType.Donate];
 
   const handleNavClick = (page: Page) => {
     navigate(page);
     setIsMenuOpen(false);
   }
+
+  const ThemeToggleButton: React.FC<{ className?: string }> = ({ className }) => (
+     <button
+        onClick={toggleTheme}
+        className={`p-2 rounded-full text-gray-300 hover:text-white hover:bg-primary-blue/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-blue focus:ring-primary-green ${className}`}
+        aria-label="Toggle theme"
+    >
+        {theme === Theme.Light ? <MoonIcon className="h-6 w-6" /> : <SunIcon className="h-6 w-6" />}
+    </button>
+  );
 
   return (
     <>
@@ -75,8 +88,9 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
                 </nav>
             </div>
 
-            {/* Right Side: Spacer for desktop, Menu button for mobile */}
-            <div className="flex-1 flex justify-end">
+            {/* Right Side: Theme Toggle & Menu button */}
+            <div className="flex-1 flex justify-end items-center gap-2">
+                <ThemeToggleButton className="hidden md:inline-flex" />
                 <div className="md:hidden">
                     <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-300 hover:text-white">
                         <MenuIcon className="h-8 w-8" />
@@ -95,9 +109,12 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
                     CryptoGuy<span className="text-primary-green">TECH</span>
                 </h1>
               </div>
-              <button onClick={() => setIsMenuOpen(false)} className="text-gray-300 hover:text-white">
-                  <CloseIcon className="h-8 w-8" />
-              </button>
+              <div className="flex items-center gap-2">
+                <ThemeToggleButton />
+                <button onClick={() => setIsMenuOpen(false)} className="text-gray-300 hover:text-white">
+                    <CloseIcon className="h-8 w-8" />
+                </button>
+              </div>
           </div>
           <nav className="flex flex-col items-center justify-center space-y-8 mt-16">
               {navItems.map((item) => {

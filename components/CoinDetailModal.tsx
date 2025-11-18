@@ -8,9 +8,9 @@ interface CoinDetailModalProps {
 }
 
 const StatCard: React.FC<{ label: string; value: string; className?: string }> = ({ label, value, className }) => (
-    <div className="bg-dark-bg p-4 rounded-lg">
-        <p className="text-sm text-gray-400">{label}</p>
-        <p className={`text-lg font-semibold text-white ${className}`}>{value}</p>
+    <div className="bg-gray-100 dark:bg-dark-bg p-4 rounded-lg">
+        <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
+        <p className={`text-lg font-semibold text-gray-900 dark:text-white ${className}`}>{value}</p>
     </div>
 );
 
@@ -41,29 +41,29 @@ export const CoinDetailModal: React.FC<CoinDetailModalProps> = ({ coin, onClose 
         >
             <div 
                 ref={modalRef}
-                className="bg-dark-card rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col"
+                className="bg-white dark:bg-dark-card rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-gray-200 dark:border-gray-700"
             >
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b border-gray-700">
+                <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex items-center gap-4">
                         <img src={coin.image} alt={coin.name} className="w-10 h-10 rounded-full" />
                         <div>
-                            <h2 className="text-2xl font-bold text-white">{coin.name}</h2>
-                            <p className="text-sm text-gray-400">{coin.symbol.toUpperCase()}</p>
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{coin.name}</h2>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">{coin.symbol.toUpperCase()}</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="text-gray-400 hover:text-white text-3xl">&times;</button>
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-800 dark:hover:text-white text-3xl">&times;</button>
                 </div>
 
                 {/* Content */}
                 <div className="p-6 overflow-y-auto">
                     {/* Price & Chart */}
                     <div className="mb-6">
-                        <p className="text-sm text-gray-400">Current Price</p>
-                        <p className="text-4xl font-bold text-white mb-4">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Current Price</p>
+                        <p className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
                             ${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
                         </p>
-                        <div className="h-64 w-full bg-dark-bg rounded-lg">
+                        <div className="h-64 w-full bg-gray-100 dark:bg-dark-bg rounded-lg">
                            <DetailedPriceChart data={coin.sparkline_in_7d?.price} />
                         </div>
                     </div>

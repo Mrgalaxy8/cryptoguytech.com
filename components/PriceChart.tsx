@@ -8,7 +8,7 @@ interface PriceChartProps {
 const CustomTooltip: React.FC<any> = ({ active, payload }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-dark-card p-2 border border-gray-700 rounded-md text-white text-xs shadow-lg">
+            <div className="bg-white dark:bg-dark-card p-2 border border-gray-200 dark:border-gray-700 rounded-md text-gray-900 dark:text-white text-xs shadow-lg">
                 <p>{`$${payload[0].value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}`}</p>
             </div>
         );

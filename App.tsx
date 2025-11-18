@@ -84,7 +84,7 @@ const App: React.FC = () => {
 
   return (
     <CoinDataProvider>
-      <div className="h-[calc(var(--vh,1vh)*100)] flex flex-col font-sans text-gray-200 transition-colors duration-300 overflow-y-auto">
+      <div className="h-[calc(var(--vh,1vh)*100)] flex flex-col font-sans text-gray-900 dark:text-gray-200 transition-colors duration-300 overflow-y-auto">
         <Header currentPage={currentPage} navigate={navigate} />
         <NetworkStatusBanner />
         <main className="flex-grow">

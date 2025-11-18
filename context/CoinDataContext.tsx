@@ -63,11 +63,19 @@ export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     const timeoutIdRef = useRef<number | null>(null);
     const retryDelayRef = useRef(INITIAL_RETRY_DELAY);
+    const abortControllerRef = useRef<AbortController | null>(null);
 
     const fetchData = useCallback(async (isManualOrInitial = false) => {
+        // Abort any pending request. This is safe to call even if there's no pending request.
+        abortControllerRef.current?.abort();
+        
         if (timeoutIdRef.current) {
             clearTimeout(timeoutIdRef.current);
         }
+
+        // Create a new controller for the new request.
+        abortControllerRef.current = new AbortController();
+        const signal = abortControllerRef.current.signal;
 
         if (isManualOrInitial) {
             setIsLoading(true);
@@ -77,23 +85,19 @@ export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         if (!navigator.onLine) {
             setError("You appear to be offline. Displaying cached data.");
             if (isManualOrInitial) setIsLoading(false);
-            // Schedule a check for when we are back online
             timeoutIdRef.current = window.setTimeout(() => fetchData(false), retryDelayRef.current);
             return;
         }
 
-        const controller = new AbortController();
         const fetchTimeout = setTimeout(() => {
-            controller.abort();
+            abortControllerRef.current?.abort();
         }, 15000); // 15 second timeout
 
         try {
             const response = await fetch(API_URL, {
-                signal: controller.signal,
-                credentials: 'omit', // Explicitly omit credentials
-                headers: {
-                    'Accept': 'application/json'
-                }
+                signal,
+                credentials: 'omit',
+                headers: { 'Accept': 'application/json' }
             });
             clearTimeout(fetchTimeout);
 
@@ -101,7 +105,6 @@ export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 let errorText = `API Error (status: ${response.status}). Retrying...`;
                 if (response.status === 429) {
                     errorText = 'API rate limit exceeded. Retrying after a longer delay...';
-                    // If rate limited, increase delay significantly for the next retry
                     retryDelayRef.current = MAX_RETRY_DELAY;
                 }
                 throw new Error(errorText);
@@ -109,40 +112,47 @@ export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             const data: Coin[] = await response.json();
             
             setCoins(data);
-            const now = new Date();
-            setLastUpdated(now);
+            setLastUpdated(new Date());
             setCachedData(data);
             setError(null);
-            retryDelayRef.current = INITIAL_RETRY_DELAY; // Reset delay on success
+            retryDelayRef.current = INITIAL_RETRY_DELAY;
         } catch (err) {
-            clearTimeout(fetchTimeout); // Clear timeout on error too
-            console.error("Failed to fetch coin data:", err);
-            
-            let errorMessage = "An unknown error occurred while fetching data. Retrying...";
-            if (err instanceof Error) {
-                 if (err.name === 'AbortError') {
-                    errorMessage = "Request timed out. Retrying...";
-                } else if (err.message.includes('Failed to fetch')) {
-                    errorMessage = "Network error. This could be due to a connection issue, an ad-blocker, or API rate-limiting. Retrying...";
-                } else {
-                    errorMessage = err.message;
+            clearTimeout(fetchTimeout);
+
+            // Don't treat expected aborts as critical errors.
+            if (err instanceof Error && err.name === 'AbortError') {
+                console.log("Fetch was aborted, likely due to a timeout or component cleanup.");
+                // Only set an error if the request was initiated manually or if there isn't a more specific error already.
+                if (isManualOrInitial || !error) {
+                    setError("Request timed out or was cancelled. Retrying...");
                 }
-            }
-            
-            setError(errorMessage);
-            
-            // If it's not a rate limit error from the response, do exponential backoff
-            if (!(err instanceof Error && err.message.includes('API rate limit exceeded'))) {
-                 retryDelayRef.current = Math.min(retryDelayRef.current * 2, MAX_RETRY_DELAY);
+            } else {
+                console.error("Failed to fetch coin data:", err);
+                
+                let errorMessage = "An unknown error occurred while fetching data. Retrying...";
+                if (err instanceof Error) {
+                     if (err.message.includes('Failed to fetch')) {
+                        errorMessage = "Network error. This could be due to a connection issue, an ad-blocker, or API rate-limiting. Retrying...";
+                    } else {
+                        errorMessage = err.message;
+                    }
+                }
+                setError(errorMessage);
+                
+                if (!(err instanceof Error && err.message.includes('API rate limit exceeded'))) {
+                     retryDelayRef.current = Math.min(retryDelayRef.current * 2, MAX_RETRY_DELAY);
+                }
             }
         } finally {
             if (isManualOrInitial) {
                 setIsLoading(false);
             }
-            // Schedule the next fetch
-            timeoutIdRef.current = window.setTimeout(() => fetchData(false), retryDelayRef.current);
+            // Schedule the next fetch, but only if the request wasn't aborted by a component unmount/cleanup.
+            if (!signal.aborted) {
+                timeoutIdRef.current = window.setTimeout(() => fetchData(false), retryDelayRef.current);
+            }
         }
-    }, []);
+    }, [error]); // Dependency on 'error' helps avoid stale closures when deciding to set a new error message.
 
     useEffect(() => {
         const handleOnline = () => {
@@ -164,10 +174,14 @@ export const CoinDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             if (timeoutIdRef.current) {
                 clearTimeout(timeoutIdRef.current);
             }
+            // Abort any ongoing fetch request when the component unmounts.
+            abortControllerRef.current?.abort();
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
         };
-    }, [fetchData]);
+        // Use a stable reference for fetchData by removing dependencies
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const manualFetch = useCallback(() => {
         retryDelayRef.current = INITIAL_RETRY_DELAY;

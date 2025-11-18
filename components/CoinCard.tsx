@@ -9,7 +9,7 @@ interface CoinCardProps {
 
 const Stat: React.FC<{ label: string; value: string | React.ReactNode; className?: string }> = ({ label, value, className }) => (
     <div>
-        <p className="text-xs text-gray-400">{label}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
         <p className={`text-sm font-medium ${className}`}>{value}</p>
     </div>
 )
@@ -17,7 +17,7 @@ const Stat: React.FC<{ label: string; value: string | React.ReactNode; className
 export const CoinCard: React.FC<CoinCardProps> = ({ coin, onClick }) => {
     return (
         <div 
-            className="bg-white dark:bg-dark-card rounded-lg shadow-md p-4 flex flex-col gap-4 cursor-pointer transition-transform transform hover:scale-[1.02]"
+            className="bg-white dark:bg-dark-card rounded-lg shadow-md p-4 flex flex-col gap-4 cursor-pointer transition-transform transform hover:scale-[1.02] border border-gray-200 dark:border-gray-800"
             onClick={() => onClick(coin)}
         >
             {/* Top Section: Icon, Name, Symbol, Chart */}

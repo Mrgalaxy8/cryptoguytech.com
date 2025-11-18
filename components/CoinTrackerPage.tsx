@@ -175,7 +175,7 @@ export const CoinTrackerPage: React.FC = () => {
                 <input
                     type="text"
                     placeholder="Search for a coin (e.g., Bitcoin, ETH)..."
-                    className="w-full px-4 py-3 rounded-lg bg-white dark:bg-dark-card border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-green"
+                    className="w-full px-4 py-3 rounded-lg bg-white dark:bg-dark-card border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-green text-gray-900 dark:text-white"
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
@@ -228,7 +228,7 @@ export const CoinTrackerPage: React.FC = () => {
                                        </div>
                                    </div>
                                </td>
-                               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</td>
+                               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-white">${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</td>
                                <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-medium ${(coin.price_change_percentage_24h ?? 0) >= 0 ? 'text-primary-green' : 'text-red-500'}`}>
                                    {coin.price_change_percentage_24h?.toFixed(2) ?? 'N/A'}%
                                </td>
