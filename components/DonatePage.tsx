@@ -67,7 +67,7 @@ const CryptoAddress: React.FC<{ network: string; address: string }> = ({ network
 
 export const DonatePage: React.FC = () => {
     return (
-        <div className="container mx-auto px-4 py-4 animate-fade-in max-w-4xl">
+        <div className="container mx-auto px-4 py-4 animate-fade-in max-w-5xl">
             <div className="text-center mb-4">
                 <span className="inline-block py-0.5 px-2 rounded-full bg-primary-green/10 text-primary-green text-[10px] font-bold mb-1">
                     Support Us
@@ -80,7 +80,21 @@ export const DonatePage: React.FC = () => {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-stretch">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 items-stretch">
+                 <DonationCard
+                    title="M-Pesa"
+                    description="Mobile Money."
+                >
+                    <div className="bg-gray-50 dark:bg-gray-800/30 p-2 rounded border border-gray-100 dark:border-gray-700 text-left flex flex-col justify-center h-full min-h-[80px]">
+                         <p className="text-[10px] font-bold text-green-600 dark:text-green-400 uppercase tracking-wider mb-0.5">Send Money</p>
+                         <div className="flex items-center justify-between">
+                            <p className="text-lg font-mono font-bold text-gray-800 dark:text-gray-200 select-all">0701476026</p>
+                            <CompactCopyButton textToCopy="0701476026" />
+                        </div>
+                        <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">via Safaricom M-Pesa</p>
+                    </div>
+                </DonationCard>
+
                 <DonationCard
                     title="PayPal"
                     description="Quick & secure."
