@@ -15,11 +15,13 @@ import { EthereumCoursePage } from './components/EthereumCoursePage';
 import { CoinDataProvider } from './context/CoinDataContext';
 import { NetworkStatusBanner } from './components/NetworkStatusBanner';
 import { DonatePage } from './components/DonatePage';
+import { WelcomeModal } from './components/WelcomeModal';
 
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>(PageType.Home);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
 
   useEffect(() => {
     // This effect addresses the common issue on mobile devices where the viewport height
@@ -85,6 +87,7 @@ const App: React.FC = () => {
   return (
     <CoinDataProvider>
       <div className="h-[calc(var(--vh,1vh)*100)] flex flex-col font-sans text-gray-900 dark:text-gray-200 transition-colors duration-300 overflow-y-auto">
+        {showWelcomeModal && <WelcomeModal onClose={() => setShowWelcomeModal(false)} />}
         <Header currentPage={currentPage} navigate={navigate} />
         <NetworkStatusBanner />
         <main className="flex-grow">
