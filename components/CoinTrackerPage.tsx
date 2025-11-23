@@ -9,7 +9,7 @@ import { PriceChart } from './PriceChart';
 type FilterMode = 'all' | 'gainers' | 'losers';
 
 export const CoinTrackerPage: React.FC = () => {
-    const { coins, isLoading, error, fetchData, lastUpdated } = useCoinData();
+    const { coins, isLoading, error, fetchData } = useCoinData();
     const [searchTerm, setSearchTerm] = useState('');
     const [sortConfig, setSortConfig] = useState<{ key: keyof Coin, direction: 'asc' | 'desc' } | null>({ key: 'market_cap', direction: 'desc' });
     const [filterMode, setFilterMode] = useState<FilterMode>('all');
@@ -133,44 +133,10 @@ export const CoinTrackerPage: React.FC = () => {
         )
     }
 
-    const renderStatusMessage = () => {
-        if (!lastUpdated && !error) return "Real-time cryptocurrency market data.";
-
-        const timeString = lastUpdated?.toLocaleTimeString() ?? '';
-        if (error && coins.length > 0) {
-            return (
-                <span className="text-yellow-500">
-                    {timeString && `Last updated: ${timeString}. `}
-                    <span className="font-semibold">{error}</span>
-                </span>
-            );
-        }
-        return `Last updated: ${timeString}. Auto-refreshes periodically.`;
-    }
-
     return (
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
-            <h1 className="text-3xl sm:text-4xl font-bold text-center mb-2 text-primary-blue dark:text-white">Live Coin Tracker</h1>
-            <p className="text-center text-gray-600 dark:text-gray-400 mb-8 h-5 text-sm">
-                {renderStatusMessage()}
-            </p>
-            
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 animate-fade-in">
             {/* Search and Filters Bar */}
             <div className="flex flex-row items-center gap-2 mb-6">
-                <div className="relative flex-grow min-w-[140px]">
-                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg className="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                          <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                        </svg>
-                    </div>
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        className="w-full pl-9 pr-3 py-2 rounded-lg bg-white dark:bg-dark-card border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-green text-gray-900 dark:text-white text-sm"
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                </div>
-                
                 <div className="flex flex-row gap-1 sm:gap-2 flex-shrink-0">
                     {filterButtons.map(({ mode, label, shortLabel }) => (
                         <button
@@ -186,6 +152,20 @@ export const CoinTrackerPage: React.FC = () => {
                             <span className="hidden md:inline">{label}</span>
                         </button>
                     ))}
+                </div>
+
+                <div className="relative flex-grow min-w-[140px]">
+                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg className="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        className="w-full pl-9 pr-3 py-2 rounded-lg bg-white dark:bg-dark-card border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-green text-gray-900 dark:text-white text-sm"
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                 </div>
             </div>
 
