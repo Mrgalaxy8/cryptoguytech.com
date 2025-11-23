@@ -1,5 +1,5 @@
 import React from 'react';
-import { LineChart, Line, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import { LineChart, Line, YAxis, Tooltip } from 'recharts';
 
 interface PriceChartProps {
     data: number[];
@@ -30,22 +30,21 @@ export const PriceChart: React.FC<PriceChartProps> = ({ data }) => {
 
     return (
         <div style={{ width: '120px', height: '40px' }}>
-            <ResponsiveContainer>
-                <LineChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-                    <Tooltip 
-                        content={<CustomTooltip />} 
-                        cursor={{ stroke: 'rgba(100, 116, 139, 0.5)', strokeWidth: 1, strokeDasharray: '3 3' }} 
-                    />
-                    <YAxis domain={['dataMin', 'dataMax']} hide={true} />
-                    <Line
-                        type="monotone"
-                        dataKey="price"
-                        stroke={strokeColor}
-                        strokeWidth={2}
-                        dot={false}
-                    />
-                </LineChart>
-            </ResponsiveContainer>
+            <LineChart width={120} height={40} data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+                <Tooltip 
+                    content={<CustomTooltip />} 
+                    cursor={{ stroke: 'rgba(100, 116, 139, 0.5)', strokeWidth: 1, strokeDasharray: '3 3' }} 
+                />
+                <YAxis domain={['dataMin', 'dataMax']} hide={true} />
+                <Line
+                    type="monotone"
+                    dataKey="price"
+                    stroke={strokeColor}
+                    strokeWidth={2}
+                    dot={false}
+                    isAnimationActive={false} // Disable animation for better performance in lists
+                />
+            </LineChart>
         </div>
     );
 };

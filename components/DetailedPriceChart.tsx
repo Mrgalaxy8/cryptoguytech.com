@@ -54,7 +54,7 @@ export const DetailedPriceChart: React.FC<DetailedPriceChartProps> = ({ data }) 
     const gridColor = theme === Theme.Dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
 
     return (
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
             <LineChart
                 data={chartData}
                 margin={{

@@ -85,10 +85,10 @@ export const CoinTrackerPage: React.FC = () => {
         setSelectedCoin(coin);
     };
 
-    const filterButtons: { mode: FilterMode; label: string }[] = [
-        { mode: 'all', label: 'All Coins' },
-        { mode: 'gainers', label: 'Top Gainers' },
-        { mode: 'losers', label: 'Top Losers' },
+    const filterButtons: { mode: FilterMode; label: string; shortLabel: string }[] = [
+        { mode: 'all', label: 'All Coins', shortLabel: 'All' },
+        { mode: 'gainers', label: 'Top Gainers', shortLabel: 'Gainers' },
+        { mode: 'losers', label: 'Top Losers', shortLabel: 'Losers' },
     ];
 
     const renderLoadingErrorOrEmpty = (isCardView = false) => {
@@ -155,29 +155,38 @@ export const CoinTrackerPage: React.FC = () => {
                 {renderStatusMessage()}
             </p>
             
-            <div className="flex justify-center flex-wrap gap-2 md:gap-4 mb-6">
-                {filterButtons.map(({ mode, label }) => (
-                    <button
-                        key={mode}
-                        onClick={() => handleFilterChange(mode)}
-                        className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-dark-bg focus:ring-primary-green ${
-                            filterMode === mode
-                                ? 'bg-primary-green text-primary-blue shadow-md'
-                                : 'bg-white dark:bg-dark-card text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-bg border border-gray-300 dark:border-gray-700'
-                        }`}
-                    >
-                        {label}
-                    </button>
-                ))}
-            </div>
-
-            <div className="mb-6">
-                <input
-                    type="text"
-                    placeholder="Search for a coin (e.g., Bitcoin, ETH)..."
-                    className="w-full px-4 py-3 rounded-lg bg-white dark:bg-dark-card border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-green text-gray-900 dark:text-white"
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
+            {/* Search and Filters Bar */}
+            <div className="flex flex-row items-center gap-2 mb-6">
+                <div className="relative flex-grow min-w-[140px]">
+                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg className="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        className="w-full pl-9 pr-3 py-2 rounded-lg bg-white dark:bg-dark-card border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-green text-gray-900 dark:text-white text-sm"
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                
+                <div className="flex flex-row gap-1 sm:gap-2 flex-shrink-0">
+                    {filterButtons.map(({ mode, label, shortLabel }) => (
+                        <button
+                            key={mode}
+                            onClick={() => handleFilterChange(mode)}
+                            className={`px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-primary-green whitespace-nowrap ${
+                                filterMode === mode
+                                    ? 'bg-primary-green text-primary-blue shadow-md'
+                                    : 'bg-white dark:bg-dark-card text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-bg border border-gray-300 dark:border-gray-700'
+                            }`}
+                        >
+                            <span className="md:hidden">{shortLabel}</span>
+                            <span className="hidden md:inline">{label}</span>
+                        </button>
+                    ))}
+                </div>
             </div>
 
             {/* Desktop Table View */}

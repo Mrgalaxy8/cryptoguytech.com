@@ -15,11 +15,30 @@ const CheckIcon: React.FC<{ className?: string }> = ({ className }) => (
 const CompactCopyButton: React.FC<{ textToCopy: string }> = ({ textToCopy }) => {
     const [copied, setCopied] = useState(false);
 
-    const handleCopy = () => {
-        navigator.clipboard.writeText(textToCopy).then(() => {
+    const handleCopy = async () => {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(textToCopy);
+            } else {
+                 // Fallback for older browsers or non-secure context
+                 const textArea = document.createElement("textarea");
+                 textArea.value = textToCopy;
+                 textArea.style.position = "fixed"; 
+                 document.body.appendChild(textArea);
+                 textArea.focus();
+                 textArea.select();
+                 try {
+                    document.execCommand("copy");
+                 } catch (err) {
+                     console.error("Fallback: Oops, unable to copy", err);
+                 }
+                 document.body.removeChild(textArea);
+            }
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
-        });
+        } catch (err) {
+            console.error('Failed to copy!', err);
+        }
     };
 
     return (
