@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Header } from './components/Header';
-import { HomePage } from './components/HomePage';
+import { AboutPage } from './components/HomePage';
 import { CoinTrackerPage } from './components/CoinTrackerPage';
 import { Footer } from './components/Footer';
 import { CommunityPage } from './components/CommunityPage';
@@ -19,7 +19,7 @@ import { WelcomeModal } from './components/WelcomeModal';
 
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<Page>(PageType.Home);
+  const [currentPage, setCurrentPage] = useState<Page>(PageType.Tracker);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
 
@@ -69,8 +69,8 @@ const App: React.FC = () => {
     }
 
     switch (currentPage) {
-      case PageType.Home:
-        return <HomePage navigate={navigate} />;
+      case PageType.About:
+        return <AboutPage navigate={navigate} />;
       case PageType.Tracker:
         return <CoinTrackerPage />;
       case PageType.Academy:
@@ -80,7 +80,7 @@ const App: React.FC = () => {
       case PageType.Donate:
         return <DonatePage />;
       default:
-        return <HomePage navigate={navigate} />;
+        return <CoinTrackerPage />;
     }
   };
 

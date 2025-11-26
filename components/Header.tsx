@@ -25,7 +25,7 @@ const CloseIcon: React.FC<{ className?: string }> = ({ className }) => (
 export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const navItems: Page[] = [PageType.Home, PageType.Tracker, PageType.Academy, PageType.Community, PageType.Donate];
+  const navItems: Page[] = [PageType.Tracker, PageType.Academy, PageType.Community, PageType.About, PageType.Donate];
 
   const handleNavClick = (page: Page) => {
     navigate(page);
@@ -49,10 +49,10 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
           <div className="flex items-center justify-between h-20">
             {/* Left Side: Logo */}
             <div className="flex-1 flex justify-start">
-                <div className="flex-shrink-0 cursor-pointer" onClick={() => handleNavClick(PageType.Home)}>
-                  <h1 className="text-3xl font-black text-white tracking-tight">
-                      CryptoGuy<span className="text-primary-green">TECH</span>
-                  </h1>
+                <div className="flex-shrink-0 cursor-pointer flex items-center" onClick={() => handleNavClick(PageType.Tracker)}>
+                   <span className="text-2xl font-black text-white tracking-tight">
+                        CryptoGuy<span className="text-primary-green">TECH</span>
+                   </span>
                 </div>
             </div>
 
@@ -104,10 +104,10 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
       {/* Mobile Menu */}
       <div className={`fixed inset-0 bg-primary-blue z-50 transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out md:hidden`}>
           <div className="flex justify-between items-center h-20 px-4 sm:px-6">
-              <div className="flex-shrink-0 cursor-pointer" onClick={() => handleNavClick(PageType.Home)}>
-                <h1 className="text-3xl font-black text-white tracking-tight">
+              <div className="flex-shrink-0 cursor-pointer flex items-center" onClick={() => handleNavClick(PageType.Tracker)}>
+                 <span className="text-2xl font-black text-white tracking-tight">
                     CryptoGuy<span className="text-primary-green">TECH</span>
-                </h1>
+                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <ThemeToggleButton />

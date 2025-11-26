@@ -1,5 +1,5 @@
 export enum PageType {
-    Home = 'Home',
+    About = 'About',
     Academy = 'Academy',
     Tracker = 'Tracker',
     Community = 'Community',

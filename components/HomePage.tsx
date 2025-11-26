@@ -4,11 +4,11 @@ import { PageType } from '../types';
 import { PriceTicker } from './PriceTicker';
 
 
-interface HomePageProps {
+interface AboutPageProps {
     navigate: (page: Page) => void;
 }
 
-export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
+export const AboutPage: React.FC<AboutPageProps> = ({ navigate }) => {
   return (
     <div className="relative flex flex-col h-full">
       <PriceTicker />

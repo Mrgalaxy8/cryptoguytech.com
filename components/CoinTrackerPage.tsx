@@ -9,8 +9,11 @@ import { PriceChart } from './PriceChart';
 type FilterMode = 'all' | 'gainers' | 'losers';
 
 export const CoinTrackerPage: React.FC = () => {
-    const { coins, isLoading, error, fetchData } = useCoinData();
+    const { coins: contextCoins, isLoading, error, fetchData } = useCoinData();
+    
+    // Search State
     const [searchTerm, setSearchTerm] = useState('');
+    
     const [sortConfig, setSortConfig] = useState<{ key: keyof Coin, direction: 'asc' | 'desc' } | null>({ key: 'market_cap', direction: 'desc' });
     const [filterMode, setFilterMode] = useState<FilterMode>('all');
     const [selectedCoin, setSelectedCoin] = useState<Coin | null>(null);
@@ -25,18 +28,29 @@ export const CoinTrackerPage: React.FC = () => {
             setSortConfig({ key: 'market_cap', direction: 'desc' });
         }
     };
-    
+
+    // 1. Filter by Search Term (Local Top 100)
+    const searchedCoins = useMemo(() => {
+        const trimmedTerm = searchTerm.trim().toLowerCase();
+        if (!trimmedTerm) return contextCoins;
+        return contextCoins.filter(coin => 
+            coin.name.toLowerCase().includes(trimmedTerm) || 
+            coin.symbol.toLowerCase().includes(trimmedTerm)
+        );
+    }, [contextCoins, searchTerm]);
+
+    // 2. Filter by Mode (Gainers/Losers)
     const baseFilteredCoins = useMemo(() => {
-        if (!coins) return [];
         if (filterMode === 'gainers') {
-            return coins.filter(c => (c.price_change_percentage_24h ?? 0) >= 0);
+            return searchedCoins.filter(c => (c.price_change_percentage_24h ?? 0) >= 0);
         }
         if (filterMode === 'losers') {
-            return coins.filter(c => (c.price_change_percentage_24h ?? 0) < 0);
+            return searchedCoins.filter(c => (c.price_change_percentage_24h ?? 0) < 0);
         }
-        return coins;
-    }, [coins, filterMode]);
+        return searchedCoins;
+    }, [searchedCoins, filterMode]);
 
+    // 3. Sort
     const sortedCoins = useMemo(() => {
         let sortableCoins = [...baseFilteredCoins];
         if (sortConfig !== null) {
@@ -59,12 +73,7 @@ export const CoinTrackerPage: React.FC = () => {
         return sortableCoins;
     }, [baseFilteredCoins, sortConfig]);
     
-    const filteredCoins = useMemo(() => {
-        return sortedCoins.filter(coin =>
-            coin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            coin.symbol.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    }, [sortedCoins, searchTerm]);
+    const coinsToDisplay = sortedCoins;
 
     const requestSort = useCallback((key: keyof Coin) => {
         let direction: 'asc' | 'desc' = 'asc';
@@ -97,7 +106,9 @@ export const CoinTrackerPage: React.FC = () => {
                 <div className="w-4 h-4 bg-primary-green rounded-full animate-pulse"></div>
                 <div className="w-4 h-4 bg-primary-green rounded-full animate-pulse [animation-delay:0.2s]"></div>
                 <div className="w-4 h-4 bg-primary-green rounded-full animate-pulse [animation-delay:0.4s]"></div>
-                <span className="ml-2 text-gray-500 dark:text-gray-400">Loading Market Data...</span>
+                <span className="ml-2 text-gray-500 dark:text-gray-400">
+                    Loading Top 100 Coins...
+                </span>
             </div>
         );
         const errorDisplay = (
@@ -113,7 +124,9 @@ export const CoinTrackerPage: React.FC = () => {
             </div>
         );
         const noResultsDisplay = (
-             <p className="text-gray-500 dark:text-gray-400">No coins found matching your criteria.</p>
+             <p className="text-gray-500 dark:text-gray-400">
+                No coins found matching "{searchTerm}"
+             </p>
         );
 
         if (isCardView) {
@@ -162,9 +175,10 @@ export const CoinTrackerPage: React.FC = () => {
                     </div>
                     <input
                         type="text"
-                        placeholder="Search..."
+                        placeholder="Search top 100 coins..."
                         className="w-full pl-9 pr-3 py-2 rounded-lg bg-white dark:bg-dark-card border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-green text-gray-900 dark:text-white text-sm"
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        value={searchTerm}
                     />
                 </div>
             </div>
@@ -200,7 +214,14 @@ export const CoinTrackerPage: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                       {(isLoading && coins.length === 0) || (error && coins.length === 0) || (!isLoading && !error && filteredCoins.length === 0) ? renderLoadingErrorOrEmpty() : filteredCoins.map(coin => (
+                       {/* Render Logic: Loading -> Error -> Empty -> Results */}
+                       {isLoading 
+                         ? renderLoadingErrorOrEmpty() 
+                         : error 
+                            ? renderLoadingErrorOrEmpty() 
+                            : coinsToDisplay.length === 0 
+                                ? renderLoadingErrorOrEmpty() 
+                                : coinsToDisplay.map(coin => (
                            <tr 
                              key={coin.id} 
                              className="group hover:bg-gray-100 dark:hover:bg-dark-bg transition-colors duration-200 cursor-pointer"
@@ -233,7 +254,13 @@ export const CoinTrackerPage: React.FC = () => {
 
              {/* Mobile Card View */}
             <div className="md:hidden space-y-4">
-                {(isLoading && coins.length === 0) || (error && coins.length === 0) || (!isLoading && !error && filteredCoins.length === 0) ? renderLoadingErrorOrEmpty(true) : filteredCoins.map(coin => (
+                {isLoading 
+                    ? renderLoadingErrorOrEmpty(true) 
+                    : error 
+                        ? renderLoadingErrorOrEmpty(true) 
+                        : coinsToDisplay.length === 0 
+                            ? renderLoadingErrorOrEmpty(true) 
+                            : coinsToDisplay.map(coin => (
                     <CoinCard key={coin.id} coin={coin} onClick={handleRowClick} />
                 ))}
             </div>
