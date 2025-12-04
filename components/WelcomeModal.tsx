@@ -48,92 +48,130 @@ const CopyButton: React.FC<{ text: string }> = ({ text }) => {
 };
 
 const HolidayBanner: React.FC = () => (
-  <div className="w-full mb-4 relative overflow-hidden rounded-lg border border-gray-100 dark:border-gray-700">
+  <div className="w-full mb-4 relative overflow-hidden rounded-lg border border-gray-100 dark:border-gray-700 shadow-inner">
     <style>
       {`
-        @keyframes twinkle {
-          0%, 100% { opacity: 0.6; }
-          50% { opacity: 1; filter: drop-shadow(0 0 2px gold); }
+        @keyframes snowfall {
+          0% { transform: translateY(-10px); opacity: 0; }
+          20% { opacity: 0.8; }
+          100% { transform: translateY(120px); opacity: 0; }
         }
-        .light-bulb { animation: twinkle 3s infinite ease-in-out; }
-        .light-bulb:nth-child(odd) { animation-delay: 0.5s; }
-        .light-bulb:nth-child(even) { animation-delay: 1.5s; }
+        @keyframes sway {
+          0%, 100% { transform: rotate(-3deg); }
+          50% { transform: rotate(3deg); }
+        }
+        @keyframes twinkle-gold {
+          0%, 100% { opacity: 0.4; transform: scale(0.8); }
+          50% { opacity: 1; transform: scale(1.2); }
+        }
+        .snow { animation: snowfall 8s linear infinite; }
+        .ornament { transform-origin: top center; animation: sway 6s ease-in-out infinite; }
+        .ornament:nth-child(odd) { animation-duration: 7s; }
+        .star { animation: twinkle-gold 3s ease-in-out infinite; }
+        .star:nth-child(even) { animation-delay: 1.5s; }
       `}
     </style>
-    <svg viewBox="0 0 600 120" className="w-full h-auto bg-gradient-to-b from-blue-50 to-white dark:from-slate-800 dark:to-slate-900">
-      <defs>
-        <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#D42426" />
-          <stop offset="50%" stopColor="#F2C94C" />
-          <stop offset="100%" stopColor="#D42426" />
-        </linearGradient>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-          <feMerge>
-            <feMergeNode in="coloredBlur"/>
-            <feMergeNode in="SourceGraphic"/>
-          </feMerge>
-        </filter>
-      </defs>
+    <svg viewBox="0 0 600 150" className="w-full h-auto bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#334155]">
+        <defs>
+            <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FDE68A" />
+                <stop offset="50%" stopColor="#D97706" />
+                <stop offset="100%" stopColor="#92400E" />
+            </linearGradient>
+            <linearGradient id="redBauble" x1="30%" y1="30%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#ef4444" />
+                <stop offset="100%" stopColor="#991b1b" />
+            </linearGradient>
+             <linearGradient id="greenBauble" x1="30%" y1="30%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#22c55e" />
+                <stop offset="100%" stopColor="#14532d" />
+            </linearGradient>
+            <radialGradient id="glowRadial" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                <stop offset="0%" stopColor="white" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="white" stopOpacity="0" />
+            </radialGradient>
+            <filter id="textShadow">
+                <feDropShadow dx="1" dy="2" stdDeviation="1" floodColor="#000" floodOpacity="0.5" />
+            </filter>
+        </defs>
 
-      {/* Background Frosty Snowflakes */}
-      <g fill="none" stroke="#A0AEC0" strokeWidth="1" opacity="0.2">
-        <path d="M50,20 L60,30 M60,20 L50,30 M55,18 L55,32 M48,25 L62,25" transform="scale(0.8)" />
-        <path d="M500,80 L510,90 M510,80 L500,90 M505,78 L505,92 M498,85 L512,85" />
-        <path d="M100,90 L110,100 M110,90 L100,100 M105,88 L105,102 M98,95 L112,95" transform="scale(0.6)" />
-        <path d="M450,30 L460,40 M460,30 L450,40 M455,28 L455,42 M448,35 L462,35" transform="scale(0.7)" />
-      </g>
+        {/* Snowy Background */}
+        <rect width="600" height="150" fill="none" />
+        <circle cx="50" cy="20" r="1.5" fill="white" className="snow" style={{animationDelay: '0s'}} />
+        <circle cx="150" cy="10" r="2" fill="white" className="snow" style={{animationDelay: '2s'}} />
+        <circle cx="250" cy="30" r="1" fill="white" className="snow" style={{animationDelay: '4s'}} />
+        <circle cx="350" cy="15" r="1.5" fill="white" className="snow" style={{animationDelay: '1s'}} />
+        <circle cx="450" cy="25" r="2" fill="white" className="snow" style={{animationDelay: '3s'}} />
+        <circle cx="550" cy="5" r="1.5" fill="white" className="snow" style={{animationDelay: '5s'}} />
+        <circle cx="100" cy="50" r="1" fill="white" className="snow" style={{animationDelay: '2.5s'}} />
+        <circle cx="300" cy="60" r="1.5" fill="white" className="snow" style={{animationDelay: '0.5s'}} />
+        <circle cx="500" cy="40" r="2" fill="white" className="snow" style={{animationDelay: '1.5s'}} />
+        <circle cx="200" cy="80" r="1.5" fill="white" className="snow" style={{animationDelay: '3.5s'}} />
+        <circle cx="400" cy="90" r="1" fill="white" className="snow" style={{animationDelay: '4.5s'}} />
 
-      {/* String of Lights */}
-      <path d="M0,10 Q150,40 300,10 T600,10" fill="none" stroke="#2D3748" strokeWidth="1.5" opacity="0.6" />
-      
-      {/* Lights */}
-      <g className="light-bulb">
-        <circle cx="50" cy="24" r="4" fill="#F2C94C" />
-        <path d="M48,18 L52,18 L51,21 L49,21 Z" fill="#4A5568" />
-      </g>
-      <g className="light-bulb">
-        <circle cx="150" cy="24" r="4" fill="#D42426" />
-        <path d="M148,18 L152,18 L151,21 L149,21 Z" fill="#4A5568" />
-      </g>
-      <g className="light-bulb">
-        <circle cx="250" cy="18" r="4" fill="#00C853" />
-        <path d="M248,12 L252,12 L251,15 L249,15 Z" fill="#4A5568" />
-      </g>
-      <g className="light-bulb">
-        <circle cx="350" cy="18" r="4" fill="#D42426" />
-        <path d="M348,12 L352,12 L351,15 L349,15 Z" fill="#4A5568" />
-      </g>
-      <g className="light-bulb">
-        <circle cx="450" cy="24" r="4" fill="#F2C94C" />
-        <path d="M448,18 L452,18 L451,21 L449,21 Z" fill="#4A5568" />
-      </g>
-      <g className="light-bulb">
-        <circle cx="550" cy="24" r="4" fill="#00C853" />
-        <path d="M548,18 L552,18 L551,21 L549,21 Z" fill="#4A5568" />
-      </g>
+        {/* Pine Branches (Top Corners) */}
+        <g transform="translate(-10,-10)">
+             <path d="M0,0 L40,20 L30,25 L60,35 L40,40 L70,60" stroke="#14532d" strokeWidth="4" strokeLinecap="round" />
+             <path d="M0,5 L35,25 L25,30 L55,40 L35,45 L65,65" stroke="#166534" strokeWidth="3" strokeLinecap="round" opacity="0.8" />
+             <path d="M0,0 L80,10 L70,20 L100,30" stroke="#14532d" strokeWidth="4" strokeLinecap="round" />
+        </g>
+        <g transform="translate(610,-10) scale(-1, 1)">
+             <path d="M0,0 L40,20 L30,25 L60,35 L40,40 L70,60" stroke="#14532d" strokeWidth="4" strokeLinecap="round" />
+             <path d="M0,5 L35,25 L25,30 L55,40 L35,45 L65,65" stroke="#166534" strokeWidth="3" strokeLinecap="round" opacity="0.8" />
+        </g>
 
-      {/* Main Text */}
-      <text x="300" y="75" textAnchor="middle" fontFamily="serif" fontSize="36" fontWeight="bold" fill="url(#textGradient)" filter="url(#glow)">
-        Happy Holidays
-      </text>
+        {/* Strings for Ornaments */}
+        <line x1="100" y1="0" x2="100" y2="40" stroke="#e2e8f0" strokeWidth="1" opacity="0.5" />
+        <line x1="500" y1="0" x2="500" y2="40" stroke="#e2e8f0" strokeWidth="1" opacity="0.5" />
+        <line x1="300" y1="0" x2="300" y2="25" stroke="#e2e8f0" strokeWidth="1" opacity="0.5" />
+        <line x1="50" y1="0" x2="50" y2="60" stroke="#e2e8f0" strokeWidth="1" opacity="0.5" />
+        <line x1="550" y1="0" x2="550" y2="60" stroke="#e2e8f0" strokeWidth="1" opacity="0.5" />
 
-      {/* Decor Left (Holly) */}
-      <g transform="translate(40, 70) rotate(-15)">
-        <path d="M0,0 C-10,10 -10,25 0,35 C10,25 10,10 0,0" fill="#2E5B33" />
-        <path d="M0,0 C-10,10 -10,25 0,35 C10,25 10,10 0,0" fill="#2E5B33" transform="rotate(45)" />
-        <circle cx="5" cy="15" r="3" fill="#D42426" />
-        <circle cx="10" cy="12" r="3" fill="#D42426" />
-        <circle cx="1" cy="18" r="3" fill="#D42426" />
-      </g>
+        {/* Hanging Ornaments */}
+        <g className="ornament" style={{transformOrigin: '50px 0px'}}>
+             <circle cx="50" cy="70" r="10" fill="url(#goldGradient)" />
+             <circle cx="50" cy="70" r="10" fill="url(#glowRadial)" opacity="0.3" />
+             <rect x="48" y="58" width="4" height="4" fill="#9ca3af" rx="1" />
+        </g>
+         <g className="ornament" style={{transformOrigin: '550px 0px', animationDelay: '-2s'}}>
+             <circle cx="550" cy="70" r="10" fill="url(#goldGradient)" />
+             <circle cx="550" cy="70" r="10" fill="url(#glowRadial)" opacity="0.3" />
+             <rect x="548" y="58" width="4" height="4" fill="#9ca3af" rx="1" />
+        </g>
 
-      {/* Decor Right (Bell) */}
-      <g transform="translate(540, 70) rotate(15)">
-         <path d="M0,0 Q-5,15 -12,18 L12,18 Q5,15 0,0" fill="#F2C94C" />
-         <circle cx="0" cy="18" r="2.5" fill="#D4AF37" />
-         <path d="M0,0 C-10,-5 -10,-15 0,-20 C10,-15 10,-5 0,0" fill="#2E5B33" transform="translate(0,0) scale(0.6)"/>
-         <circle cx="0" cy="-5" r="2" fill="#D42426" />
-      </g>
+        <g className="ornament" style={{transformOrigin: '100px 0px', animationDelay: '-1s'}}>
+             <circle cx="100" cy="50" r="12" fill="url(#redBauble)" />
+             {/* Highlight on Bauble */}
+             <path d="M96,46 Q100,42 104,46" stroke="white" strokeWidth="2" strokeOpacity="0.5" fill="none" />
+             <rect x="98" y="36" width="4" height="6" fill="#fcd34d" rx="1" />
+        </g>
+
+        <g className="ornament" style={{transformOrigin: '500px 0px', animationDelay: '-3s'}}>
+             <circle cx="500" cy="50" r="12" fill="url(#greenBauble)" />
+             <path d="M496,46 Q500,42 504,46" stroke="white" strokeWidth="2" strokeOpacity="0.5" fill="none" />
+             <rect x="498" y="36" width="4" height="6" fill="#fcd34d" rx="1" />
+        </g>
+        
+        {/* Center Decoration */}
+        <g className="ornament" style={{transformOrigin: '300px 0px', animationDelay: '-1.5s'}}>
+            <circle cx="300" cy="35" r="10" fill="url(#redBauble)" />
+            <rect x="298" y="23" width="4" height="4" fill="#fcd34d" rx="1" />
+        </g>
+
+        {/* Main Text */}
+        <text x="300" y="100" textAnchor="middle" fontFamily="'Times New Roman', serif" fontSize="42" fontWeight="bold" fill="url(#goldGradient)" filter="url(#textShadow)" letterSpacing="2">
+          Happy Holidays
+        </text>
+         <text x="300" y="125" textAnchor="middle" fontFamily="sans-serif" fontSize="12" fill="#94a3b8" letterSpacing="4" opacity="0.8">
+          FROM CRYPTOGUYTECH
+        </text>
+
+        {/* Twinkling Stars */}
+        <path d="M200,80 L202,85 L207,87 L202,89 L200,94 L198,89 L193,87 L198,85 Z" fill="#FDE68A" className="star" />
+        <path d="M400,90 L402,95 L407,97 L402,99 L400,104 L398,99 L393,97 L398,95 Z" fill="#FDE68A" className="star" />
+        <circle cx="50" cy="110" r="2" fill="#FDE68A" className="star" />
+        <circle cx="550" cy="120" r="2" fill="#FDE68A" className="star" />
+
     </svg>
   </div>
 );
