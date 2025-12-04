@@ -44,7 +44,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-primary-blue/80 backdrop-blur-md shadow-md shadow-primary-green/20">
+      <header className="sticky top-0 z-50 bg-primary-blue/80 backdrop-blur-md shadow-md shadow-primary-green/20 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Left Side: Logo */}
@@ -99,6 +99,9 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
             </div>
           </div>
         </div>
+        
+        {/* Christmas Decoration */}
+        <div className="christmas-garland"></div>
       </header>
 
       {/* Mobile Menu */}
