@@ -47,6 +47,97 @@ const CopyButton: React.FC<{ text: string }> = ({ text }) => {
   );
 };
 
+const HolidayBanner: React.FC = () => (
+  <div className="w-full mb-4 relative overflow-hidden rounded-lg border border-gray-100 dark:border-gray-700">
+    <style>
+      {`
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 1; filter: drop-shadow(0 0 2px gold); }
+        }
+        .light-bulb { animation: twinkle 3s infinite ease-in-out; }
+        .light-bulb:nth-child(odd) { animation-delay: 0.5s; }
+        .light-bulb:nth-child(even) { animation-delay: 1.5s; }
+      `}
+    </style>
+    <svg viewBox="0 0 600 120" className="w-full h-auto bg-gradient-to-b from-blue-50 to-white dark:from-slate-800 dark:to-slate-900">
+      <defs>
+        <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#D42426" />
+          <stop offset="50%" stopColor="#F2C94C" />
+          <stop offset="100%" stopColor="#D42426" />
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      {/* Background Frosty Snowflakes */}
+      <g fill="none" stroke="#A0AEC0" strokeWidth="1" opacity="0.2">
+        <path d="M50,20 L60,30 M60,20 L50,30 M55,18 L55,32 M48,25 L62,25" transform="scale(0.8)" />
+        <path d="M500,80 L510,90 M510,80 L500,90 M505,78 L505,92 M498,85 L512,85" />
+        <path d="M100,90 L110,100 M110,90 L100,100 M105,88 L105,102 M98,95 L112,95" transform="scale(0.6)" />
+        <path d="M450,30 L460,40 M460,30 L450,40 M455,28 L455,42 M448,35 L462,35" transform="scale(0.7)" />
+      </g>
+
+      {/* String of Lights */}
+      <path d="M0,10 Q150,40 300,10 T600,10" fill="none" stroke="#2D3748" strokeWidth="1.5" opacity="0.6" />
+      
+      {/* Lights */}
+      <g className="light-bulb">
+        <circle cx="50" cy="24" r="4" fill="#F2C94C" />
+        <path d="M48,18 L52,18 L51,21 L49,21 Z" fill="#4A5568" />
+      </g>
+      <g className="light-bulb">
+        <circle cx="150" cy="24" r="4" fill="#D42426" />
+        <path d="M148,18 L152,18 L151,21 L149,21 Z" fill="#4A5568" />
+      </g>
+      <g className="light-bulb">
+        <circle cx="250" cy="18" r="4" fill="#00C853" />
+        <path d="M248,12 L252,12 L251,15 L249,15 Z" fill="#4A5568" />
+      </g>
+      <g className="light-bulb">
+        <circle cx="350" cy="18" r="4" fill="#D42426" />
+        <path d="M348,12 L352,12 L351,15 L349,15 Z" fill="#4A5568" />
+      </g>
+      <g className="light-bulb">
+        <circle cx="450" cy="24" r="4" fill="#F2C94C" />
+        <path d="M448,18 L452,18 L451,21 L449,21 Z" fill="#4A5568" />
+      </g>
+      <g className="light-bulb">
+        <circle cx="550" cy="24" r="4" fill="#00C853" />
+        <path d="M548,18 L552,18 L551,21 L549,21 Z" fill="#4A5568" />
+      </g>
+
+      {/* Main Text */}
+      <text x="300" y="75" textAnchor="middle" fontFamily="serif" fontSize="36" fontWeight="bold" fill="url(#textGradient)" filter="url(#glow)">
+        Happy Holidays
+      </text>
+
+      {/* Decor Left (Holly) */}
+      <g transform="translate(40, 70) rotate(-15)">
+        <path d="M0,0 C-10,10 -10,25 0,35 C10,25 10,10 0,0" fill="#2E5B33" />
+        <path d="M0,0 C-10,10 -10,25 0,35 C10,25 10,10 0,0" fill="#2E5B33" transform="rotate(45)" />
+        <circle cx="5" cy="15" r="3" fill="#D42426" />
+        <circle cx="10" cy="12" r="3" fill="#D42426" />
+        <circle cx="1" cy="18" r="3" fill="#D42426" />
+      </g>
+
+      {/* Decor Right (Bell) */}
+      <g transform="translate(540, 70) rotate(15)">
+         <path d="M0,0 Q-5,15 -12,18 L12,18 Q5,15 0,0" fill="#F2C94C" />
+         <circle cx="0" cy="18" r="2.5" fill="#D4AF37" />
+         <path d="M0,0 C-10,-5 -10,-15 0,-20 C10,-15 10,-5 0,0" fill="#2E5B33" transform="translate(0,0) scale(0.6)"/>
+         <circle cx="0" cy="-5" r="2" fill="#D42426" />
+      </g>
+    </svg>
+  </div>
+);
+
 export const WelcomeModal: React.FC<WelcomeModalProps> = ({ onClose }) => {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 overflow-hidden">
@@ -71,6 +162,9 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ onClose }) => {
 
         {/* Content Body - Optimized for density */}
         <div className="p-3 overflow-y-auto custom-scrollbar">
+          
+          <HolidayBanner />
+
           <p className="text-center text-xs text-gray-500 dark:text-gray-400 mb-3">
              Support our platform. Donations keep us running.
           </p>
