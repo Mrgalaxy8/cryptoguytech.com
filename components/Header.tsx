@@ -99,9 +99,6 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
             </div>
           </div>
         </div>
-        
-        {/* Christmas Decoration */}
-        <div className="christmas-garland"></div>
       </header>
 
       {/* Mobile Menu */}
