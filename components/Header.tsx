@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import type { Page } from '../types';
 import { PageType, Theme } from '../types';
@@ -21,10 +22,31 @@ const CloseIcon: React.FC<{ className?: string }> = ({ className }) => (
     </svg>
 );
 
+// Custom AI Button Component
+const AIButton: React.FC<{ onClick: () => void; isActive: boolean; className?: string }> = ({ onClick, isActive, className }) => (
+    <button
+        onClick={onClick}
+        className={`relative group flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${
+            isActive 
+            ? 'bg-gradient-to-br from-primary-green to-primary-blue shadow-lg scale-105 ring-2 ring-primary-green ring-offset-2 ring-offset-gray-900' 
+            : 'bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700'
+        } ${className}`}
+        aria-label="AI Tutor"
+    >
+        <span className={`text-xl font-black ${isActive ? 'text-white' : 'text-gray-700 dark:text-gray-300'}`}>
+            CG
+        </span>
+        <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-sm z-10 animate-bounce">
+            AI
+        </span>
+    </button>
+);
+
 
 export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  // We handle AI separately in the render to place it specifically
   const navItems: Page[] = [PageType.Tracker, PageType.Academy, PageType.Community, PageType.About, PageType.Donate];
 
   const handleNavClick = (page: Page) => {
@@ -57,7 +79,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
             </div>
 
             {/* Center: Desktop Nav */}
-            <div className="hidden md:flex justify-center">
+            <div className="hidden md:flex justify-center items-center gap-6 lg:gap-8">
                 <nav className="flex items-center space-x-6 lg:space-x-8">
                   {navItems.map((item) => {
                     if (item === PageType.Donate) {
@@ -86,12 +108,24 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
                       )
                   })}
                 </nav>
+                
+                {/* AI Button Placed After Donate */}
+                <AIButton 
+                    onClick={() => handleNavClick(PageType.AI)} 
+                    isActive={currentPage === PageType.AI}
+                />
             </div>
 
             {/* Right Side: Theme Toggle & Menu button */}
             <div className="flex-1 flex justify-end items-center gap-2">
                 <ThemeToggleButton className="hidden md:inline-flex" />
-                <div className="md:hidden">
+                <div className="md:hidden flex items-center gap-4">
+                     {/* Mobile AI Button visible in header */}
+                    <AIButton 
+                        onClick={() => handleNavClick(PageType.AI)} 
+                        isActive={currentPage === PageType.AI}
+                        className="w-10 h-10"
+                    />
                     <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-300 hover:text-white">
                         <MenuIcon className="h-8 w-8" />
                     </button>
@@ -143,6 +177,17 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
                     </button>
                 )
               })}
+              {/* Mobile Menu AI Link */}
+              <button
+                  onClick={() => handleNavClick(PageType.AI)}
+                  className={`flex items-center gap-2 text-2xl font-bold transition-colors duration-200 ${
+                    currentPage === PageType.AI
+                      ? 'text-primary-green'
+                      : 'text-gray-300 hover:text-primary-green'
+                  }`}
+                >
+                  AI Tutor <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">New</span>
+              </button>
           </nav>
       </div>
     </>

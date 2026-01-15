@@ -1,9 +1,11 @@
+
 export enum PageType {
     About = 'About',
     Academy = 'Academy',
     Tracker = 'Tracker',
     Community = 'Community',
     Donate = 'Donate',
+    AI = 'AI_Tutor',
 }
 
 export type Page = PageType;

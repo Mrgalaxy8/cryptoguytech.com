@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { Header } from './components/Header';
 import { AboutPage } from './components/HomePage';
@@ -16,6 +17,7 @@ import { CoinDataProvider } from './context/CoinDataContext';
 import { NetworkStatusBanner } from './components/NetworkStatusBanner';
 import { DonatePage } from './components/DonatePage';
 import { WelcomeModal } from './components/WelcomeModal';
+import { AITutor } from './components/AITutor';
 
 
 const App: React.FC = () => {
@@ -79,6 +81,8 @@ const App: React.FC = () => {
         return <CommunityPage />;
       case PageType.Donate:
         return <DonatePage />;
+      case PageType.AI:
+        return <AITutor />;
       default:
         return <CoinTrackerPage />;
     }
