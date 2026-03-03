@@ -19,7 +19,7 @@ export const Footer: React.FC = () => {
                             <SocialIcon href="https://www.facebook.com/Cryptoguy.tech">
                                 <FacebookIcon className="w-6 h-6" />
                             </SocialIcon>
-                            <SocialIcon href="https://www.instagram.com/cryptoguy.tech/">
+                            <SocialIcon href="https://www.instagram.com/cryptoguytech/">
                                 <InstagramIcon className="w-6 h-6" />
                             </SocialIcon>
                             <SocialIcon href="https://x.com/cryptoguy476335">

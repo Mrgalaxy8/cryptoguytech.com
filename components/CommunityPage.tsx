@@ -3,7 +3,7 @@ import { FacebookIcon, InstagramIcon, XIcon, WhatsAppIcon } from './icons/Social
 
 const socialLinks = [
   { name: 'Facebook', icon: FacebookIcon, href: 'https://www.facebook.com/Cryptoguy.tech', description: 'Join our community for news and discussions.' },
-  { name: 'Instagram', icon: InstagramIcon, href: 'https://www.instagram.com/cryptoguy.tech/', description: 'Follow us for visual updates and stories.' },
+  { name: 'Instagram', icon: InstagramIcon, href: 'https://www.instagram.com/cryptoguytech/', description: 'Follow us for visual updates and stories.' },
   { name: 'X (Twitter)', icon: XIcon, href: 'https://x.com/cryptoguy476335', description: 'Get real-time updates and join the conversation on X.' },
   { name: 'WhatsApp', icon: WhatsAppIcon, href: 'https://chat.whatsapp.com/ENRVqPrrY4yHxSEW9xH6jn', description: 'Join our community group on WhatsApp.' },
 ];
