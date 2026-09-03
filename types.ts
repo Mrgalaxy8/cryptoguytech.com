@@ -22,5 +22,8 @@ export interface Coin {
   current_price: number;
   market_cap: number | null;
   price_change_percentage_24h: number | null;
+  price_change_percentage_1h_in_currency: number | null;
+  price_change_percentage_7d_in_currency: number | null;
+  total_volume: number | null;
   sparkline_in_7d: { price: number[] };
 }

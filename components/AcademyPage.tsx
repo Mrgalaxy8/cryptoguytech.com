@@ -47,7 +47,7 @@ export const AcademyPage: React.FC<AcademyPageProps> = ({ onSelectCourse }) => {
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
             <div className="text-center">
-                <h1 className="text-3xl sm:text-4xl font-bold text-primary-blue dark:text-white">CryptoGuyTECH Academy</h1>
+                <h1 className="text-3xl sm:text-4xl font-bold text-primary-blue dark:text-white">CRYPTOGUY Academy</h1>
                 <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400">
                     Start your journey into the world of blockchain. Select a course to begin your learning adventure.
                 </p>

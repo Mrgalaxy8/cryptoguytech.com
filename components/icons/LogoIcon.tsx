@@ -9,7 +9,7 @@ export const LogoIcon: React.FC<{ className?: string }> = ({ className }) => (
       </linearGradient>
     </defs>
     <text x="0" y="35" fontFamily="Inter, sans-serif" fontSize="32" fontWeight="900" fill="url(#logo-gradient)">
-      CryptoGuy<tspan fill="#00C853">TECH</tspan>
+      CRYPTO<tspan fill="#00C853">GUY</tspan>
     </text>
   </svg>
 );

@@ -51,7 +51,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
             <div className="flex-1 flex justify-start">
                 <div className="flex-shrink-0 cursor-pointer flex items-center" onClick={() => handleNavClick(PageType.Tracker)}>
                    <span className="text-2xl font-black text-white tracking-tight">
-                        CryptoGuy<span className="text-primary-green">TECH</span>
+                        CRYPTO<span className="text-primary-green">GUY</span>
                    </span>
                 </div>
             </div>
@@ -89,10 +89,10 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
             </div>
 
             {/* Right Side: Theme Toggle & Menu button */}
-            <div className="flex-1 flex justify-end items-center gap-2">
+            <div className="flex-1 flex justify-end items-center gap-2 sm:gap-3">
                 <ThemeToggleButton className="hidden md:inline-flex" />
-                <div className="md:hidden">
-                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-300 hover:text-white">
+                <div className="md:hidden flex items-center gap-1.5">
+                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-300 hover:text-white p-1">
                         <MenuIcon className="h-8 w-8" />
                     </button>
                 </div>
@@ -106,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, navigate }) => {
           <div className="flex justify-between items-center h-20 px-4 sm:px-6">
               <div className="flex-shrink-0 cursor-pointer flex items-center" onClick={() => handleNavClick(PageType.Tracker)}>
                  <span className="text-2xl font-black text-white tracking-tight">
-                    CryptoGuy<span className="text-primary-green">TECH</span>
+                    CRYPTO<span className="text-primary-green">GUY</span>
                  </span>
               </div>
               <div className="flex items-center gap-2">

@@ -21,7 +21,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ navigate }) => {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
             <div className="animate-fade-in">
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-primary-blue dark:text-white">
-                    CryptoGuyTECH
+                    CRYPTOGUY
                 </h1>
                 <p className="mt-4 text-lg md:text-xl lg:text-2xl text-primary-green">
                     Learn, Track & Grow in the Crypto World

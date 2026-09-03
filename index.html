@@ -2,6 +2,39 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script>
+      // Gracefully capture and suppress external Web3 extension connection errors (e.g. MetaMask in sandboxed iframes)
+      window.addEventListener('unhandledrejection', function (event) {
+        var reason = event.reason;
+        var msg = (reason && (reason.message || reason.stack || String(reason))) || '';
+        if (
+          msg.toLowerCase().includes('metamask') ||
+          msg.toLowerCase().includes('failed to connect') ||
+          msg.includes('chrome-extension://') ||
+          msg.includes('moz-extension://')
+        ) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          console.warn('[Extension Guard] Prevented unhandled wallet extension error from bubbling:', msg);
+        }
+      }, true);
+
+      window.addEventListener('error', function (event) {
+        var msg = (event && event.message) || '';
+        var filename = (event && event.filename) || '';
+        if (
+          msg.toLowerCase().includes('metamask') ||
+          msg.toLowerCase().includes('failed to connect') ||
+          filename.includes('extension') ||
+          filename.includes('inpage.js')
+        ) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          console.warn('[Extension Guard] Prevented wallet extension error from bubbling:', msg);
+          return true;
+        }
+      }, true);
+    </script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8-Z1ZB63P59"></script>
     <script>
@@ -16,22 +49,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Meta Tags -->
-    <title>CryptoGuyTECH</title>
-    <meta name="title" content="CryptoGuyTECH - Learn, Track & Grow">
-    <meta name="description" content="CryptoGuyTECH is a smart platform that helps you learn, track, and grow in the crypto world. It brings together clear crypto education, real-time coin data, and guidance to keep you informed.">
+    <title>CRYPTOGUY</title>
+    <meta name="title" content="CRYPTOGUY - Learn, Track & Grow">
+    <meta name="description" content="A platform merging crypto education, live coin tracking, and real-time market data across the blockchain ecosystem.">
 
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cryptoguy.tech/">
-    <meta property="og:title" content="CryptoGuyTECH - Learn, Track & Grow">
-    <meta property="og:description" content="CryptoGuyTECH is a smart platform that helps you learn, track, and grow in the crypto world. It brings together clear crypto education, real-time coin data, and guidance.">
+    <meta property="og:title" content="CRYPTOGUY - Learn, Track & Grow">
+    <meta property="og:description" content="A platform merging crypto education, live coin tracking, and real-time market data across the blockchain ecosystem.">
     <meta property="og:image" content="/share-image.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cryptoguy.tech/">
-    <meta property="twitter:title" content="CryptoGuyTECH - Learn, Track & Grow">
-    <meta property="twitter:description" content="CryptoGuyTECH is a smart platform that helps you learn, track, and grow in the crypto world. It brings together clear crypto education, real-time coin data, and guidance.">
+    <meta property="twitter:title" content="CRYPTOGUY - Learn, Track & Grow">
+    <meta property="twitter:description" content="A platform merging crypto education, live coin tracking, and real-time market data across the blockchain ecosystem.">
     <meta property="twitter:image" content="/share-image.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -59,7 +92,7 @@
               'background-pan': 'background-pan 10s linear infinite',
               'fade-in': 'fade-in 0.5s ease-out forwards',
               'slide-up': 'slide-up 0.5s ease-out forwards',
-              'marquee': 'marquee 12.5s linear infinite',
+              'marquee': 'marquee 39s linear infinite',
             },
             keyframes: {
               'background-pan': {
@@ -84,94 +117,15 @@
       }
     </script>
     <style>
-      .group:hover .animate-marquee {
+      .group:hover .animate-marquee,
+      .group:active .animate-marquee {
         animation-play-state: paused;
       }
-
-      /* Splash Screen Styles */
-      #splash-screen {
-        position: fixed;
-        inset: 0;
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #051324;
-        transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
-      }
-
-      #splash-screen.fade-out {
-        opacity: 0;
-        visibility: hidden;
-      }
-
-      #splash-screen h1 {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: clamp(2rem, 8vw, 5rem); /* Responsive font size */
-        text-align: center;
-        padding: 0 1rem;
-        color: transparent;
-        background: linear-gradient(90deg, #00C853, #2a6fdb);
-        -webkit-background-clip: text;
-        background-clip: text;
-        animation: elegant-bounce-in 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-      }
-
-      @keyframes elegant-bounce-in {
-        0% {
-          opacity: 0;
-          transform: scale(0.7);
-        }
-        50% {
-          opacity: 1;
-        }
-        70% {
-          transform: scale(1.05);
-        }
-        100% {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "recharts": "https://aistudiocdn.com/recharts@^3.3.0",
-    "vite": "https://aistudiocdn.com/vite@^7.1.12",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.0"
-  }
-}
-</script>
-</head>
+  </head>
   <body class="bg-gray-100 dark:bg-dark-bg transition-colors duration-300">
-    <div id="splash-screen">
-      <h1>Welcome to CryptoGuyTech</h1>
-    </div>
     <div id="root"></div>
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const splashScreen = document.getElementById('splash-screen');
-
-        if (splashScreen) {
-          // After 3 seconds, add the fade-out class
-          setTimeout(() => {
-            splashScreen.classList.add('fade-out');
-
-            // After the fade-out animation completes (500ms), 
-            // remove the element from the DOM so it doesn't block page content.
-            setTimeout(() => {
-              splashScreen.remove();
-            }, 500); 
-
-          }, 3000); // Time the splash screen is visible
-        }
-      });
-    </script>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
+

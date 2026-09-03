@@ -58,7 +58,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ onClose }) => {
         <div className="bg-primary-blue px-4 py-2 flex justify-between items-center shrink-0 rounded-t-lg">
           <div>
               <h2 className="text-lg font-black text-white tracking-tight">
-                CryptoGuy<span className="text-primary-green">TECH</span>
+                CRYPTO<span className="text-primary-green">GUY</span>
               </h2>
           </div>
           <button 
@@ -104,7 +104,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ onClose }) => {
                 </div>
               </div>
               <a
-                href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=cryptoguytech@gmail.com&item_name=Donation+to+CryptoGuyTECH&currency_code=USD"
+                href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=cryptoguytech@gmail.com&item_name=Donation+to+CRYPTOGUY&currency_code=USD"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block w-full py-1 bg-[#0070BA] hover:bg-[#003087] text-white text-center text-xs font-bold rounded"

@@ -95,7 +95,7 @@ export const DonatePage: React.FC = () => {
                     Power the Future
                 </h1>
                 <p className="max-w-xl mx-auto text-xs text-gray-600 dark:text-gray-300">
-                    CryptoGuyTECH is free. Donations keep it running.
+                    CRYPTOGUY is free. Donations keep it running.
                 </p>
             </div>
 
@@ -126,7 +126,7 @@ export const DonatePage: React.FC = () => {
                         </div>
                     </div>
                     <a
-                        href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=cryptoguytech@gmail.com&item_name=Donation+to+CryptoGuyTECH&currency_code=USD"
+                        href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=cryptoguytech@gmail.com&item_name=Donation+to+CRYPTOGUY&currency_code=USD"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="block w-full py-2 px-4 bg-[#0070BA] hover:bg-[#003087] text-white font-bold rounded shadow-sm transition-all duration-300 text-center text-xs sm:text-sm mt-2"
@@ -137,7 +137,7 @@ export const DonatePage: React.FC = () => {
 
                 <DonationCard
                     title="Crypto"
-                    description="SOL, ETH, BTC."
+                    description="SOL, ETH & BTC."
                 >
                     <div className="space-y-2">
                         <CryptoAddress network="Solana" address="9BZCsMtqXdvwvesozEgms8BPvrSN2236ts7TGyocpVkB" />

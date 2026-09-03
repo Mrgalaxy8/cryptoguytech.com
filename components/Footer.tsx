@@ -13,7 +13,7 @@ export const Footer: React.FC = () => {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div>
-                        <h3 className="text-lg font-bold text-white mb-4">CryptoGuy<span className="text-primary-green">TECH</span></h3>
+                        <h3 className="text-lg font-bold text-white mb-4">CRYPTO<span className="text-primary-green">GUY</span></h3>
                         <p className="text-sm text-gray-400">Learn, Track & Grow in the Crypto World.</p>
                         <div className="flex space-x-4 mt-6">
                             <SocialIcon href="https://www.facebook.com/Cryptoguy.tech">
@@ -39,7 +39,7 @@ export const Footer: React.FC = () => {
                     </div>
                 </div>
                 <div className="mt-8 pt-8 border-t border-gray-700 text-center text-sm text-gray-400">
-                    <p>&copy; {new Date().getFullYear()} CryptoGuyTECH. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} CRYPTOGUY. All rights reserved.</p>
                     <div className="mt-2 space-x-4">
                         <a href="#" className="hover:text-white">Terms of Use</a>
                         <span>&middot;</span>

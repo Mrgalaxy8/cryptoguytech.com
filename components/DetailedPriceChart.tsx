@@ -8,7 +8,7 @@ interface DetailedPriceChartProps {
 }
 
 const CustomTooltip: React.FC<any> = ({ active, payload }) => {
-    if (active && payload && payload.length) {
+    if (active && payload && payload.length && payload[0].value != null) {
         return (
             <div className="bg-white dark:bg-dark-card p-2 border border-gray-200 dark:border-gray-700 rounded-md text-gray-900 dark:text-white text-xs shadow-lg">
                 <p>{`Price: $${payload[0].value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}`}</p>
@@ -39,15 +39,15 @@ export const DetailedPriceChart: React.FC<DetailedPriceChartProps> = ({ data }) 
     }, []);
 
     const tickFormatter = (index: number) => {
-        if (index >= chartData.length) return '';
+        if (!chartData.length || index >= chartData.length) return '';
         // Approximate points per day (usually ~24)
-        const pointsPerDay = chartData.length / 7;
-        const dayIndex = Math.floor(index / pointsPerDay);
+        const pointsPerDay = Math.max(1, chartData.length / 7);
+        const dayIndex = Math.min(6, Math.max(0, Math.floor(index / pointsPerDay)));
         return dayLabels[dayIndex] || '';
     };
 
-    const firstPrice = data[0];
-    const lastPrice = data[data.length - 1];
+    const firstPrice = data[0] ?? 0;
+    const lastPrice = data[data.length - 1] ?? 0;
     const strokeColor = lastPrice >= firstPrice ? '#00C853' : '#EF4444';
     const tickColor = theme === Theme.Dark ? '#9ca3af' : '#6b7280';
     const axisLineColor = theme === Theme.Dark ? '#4b5563' : '#d1d5db';
@@ -68,7 +68,7 @@ export const DetailedPriceChart: React.FC<DetailedPriceChartProps> = ({ data }) 
                 <XAxis 
                     dataKey="index" 
                     tickFormatter={tickFormatter}
-                    interval={Math.floor(chartData.length / 7)} // Show a tick for each day
+                    interval={Math.max(1, Math.floor(chartData.length / 7))} // Show a tick for each day
                     tick={{ fill: tickColor, fontSize: 12 }}
                     axisLine={{ stroke: axisLineColor }}
                     tickLine={{ stroke: axisLineColor }}
