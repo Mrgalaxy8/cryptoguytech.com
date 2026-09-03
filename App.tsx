@@ -15,28 +15,10 @@ import { EthereumCoursePage } from './components/EthereumCoursePage';
 import { CoinDataProvider } from './context/CoinDataContext';
 import { NetworkStatusBanner } from './components/NetworkStatusBanner';
 import { DonatePage } from './components/DonatePage';
-import { WelcomeModal } from './components/WelcomeModal';
-
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>(PageType.Tracker);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
-  const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(() => {
-    try {
-      return !sessionStorage.getItem('hasSeenWelcomeModal');
-    } catch {
-      return true;
-    }
-  });
-
-  const handleCloseWelcomeModal = () => {
-    setShowWelcomeModal(false);
-    try {
-      sessionStorage.setItem('hasSeenWelcomeModal', 'true');
-    } catch {
-      // ignore
-    }
-  };
 
   const navigate = useCallback((page: Page) => {
     setCurrentPage(page);
@@ -85,7 +67,6 @@ const App: React.FC = () => {
   return (
     <CoinDataProvider>
       <div className="min-h-screen flex flex-col font-sans text-gray-900 dark:text-gray-200 bg-gray-50 dark:bg-dark-bg transition-colors duration-300">
-        {showWelcomeModal && <WelcomeModal onClose={handleCloseWelcomeModal} />}
         <Header currentPage={currentPage} navigate={navigate} />
         <NetworkStatusBanner />
         <main className="flex-grow">
