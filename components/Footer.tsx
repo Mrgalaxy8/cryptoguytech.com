@@ -1,5 +1,5 @@
 import React from 'react';
-import { FacebookIcon, InstagramIcon, XIcon, WhatsAppIcon } from './icons/SocialIcons';
+import { FacebookIcon, InstagramIcon, XIcon, TelegramIcon } from './icons/SocialIcons';
 
 const SocialIcon: React.FC<{ href: string; children: React.ReactNode }> = ({ href, children }) => (
     <a href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary-green transition-colors duration-200">
@@ -25,8 +25,8 @@ export const Footer: React.FC = () => {
                             <SocialIcon href="https://x.com/cryptoguy476335">
                                 <XIcon className="w-6 h-6" />
                             </SocialIcon>
-                            <SocialIcon href="https://whatsapp.com/channel/0029VbCfQwq6xCSPYAxV591N">
-                                <WhatsAppIcon className="w-6 h-6" />
+                            <SocialIcon href="https://t.me/+WEgyTDQYI4FmNzQ0">
+                                <TelegramIcon className="w-6 h-6" />
                             </SocialIcon>
                         </div>
                     </div>

@@ -1,11 +1,11 @@
 import React from 'react';
-import { FacebookIcon, InstagramIcon, XIcon, WhatsAppIcon } from './icons/SocialIcons';
+import { FacebookIcon, InstagramIcon, XIcon, TelegramIcon } from './icons/SocialIcons';
 
 const socialLinks = [
   { name: 'Facebook', icon: FacebookIcon, href: 'https://www.facebook.com/CRYPTOGUY.CO', description: 'Join our community for news and discussions.' },
   { name: 'Instagram', icon: InstagramIcon, href: 'https://www.instagram.com/cryptoguy.io/', description: 'Follow us for visual updates and stories.' },
   { name: 'X (Twitter)', icon: XIcon, href: 'https://x.com/cryptoguy476335', description: 'Get real-time updates and join the conversation on X.' },
-  { name: 'WhatsApp', icon: WhatsAppIcon, href: 'https://whatsapp.com/channel/0029VbCfQwq6xCSPYAxV591N', description: 'Follow our official channel on WhatsApp.' },
+  { name: 'Telegram', icon: TelegramIcon, href: 'https://t.me/+WEgyTDQYI4FmNzQ0', description: 'Join our official Telegram channel and community.' },
 ];
 
 const SocialLinkCard: React.FC<{ link: typeof socialLinks[0] }> = ({ link }) => (

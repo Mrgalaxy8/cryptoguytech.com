@@ -6,7 +6,7 @@ import { Footer } from './components/Footer';
 import { CommunityPage } from './components/CommunityPage';
 import type { Page } from './types';
 import { PageType } from './types';
-import { WhatsAppButton } from './components/WhatsAppButton';
+import { TelegramButton } from './components/TelegramButton';
 import { AcademyPage } from './components/AcademyPage';
 import { CourseDetailPage } from './components/CourseDetailPage';
 import { BitcoinCoursePage } from './components/BitcoinCoursePage';
@@ -73,7 +73,7 @@ const App: React.FC = () => {
           {renderPage()}
         </main>
         <Footer />
-        <WhatsAppButton />
+        <TelegramButton />
       </div>
     </CoinDataProvider>
   );
