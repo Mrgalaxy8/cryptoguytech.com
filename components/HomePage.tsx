@@ -37,7 +37,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ navigate }) => {
                         Explore Academy
                     </button>
                     <a 
-                        href="https://chat.whatsapp.com/ENRVqPrrY4yHxSEW9xH6jn"
+                        href="https://whatsapp.com/channel/0029VbCfQwq6xCSPYAxV591N"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full sm:w-auto inline-block text-center px-8 py-4 border-2 border-primary-green text-primary-green font-bold rounded-lg shadow-lg hover:bg-primary-green hover:text-primary-blue transform hover:-translate-y-1 transition-all duration-300"

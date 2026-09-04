@@ -16,16 +16,16 @@ export const Footer: React.FC = () => {
                         <h3 className="text-lg font-bold text-white mb-4">CRYPTO<span className="text-primary-green">GUY</span></h3>
                         <p className="text-sm text-gray-400">Learn, Track & Grow in the Crypto World.</p>
                         <div className="flex space-x-4 mt-6">
-                            <SocialIcon href="https://www.facebook.com/Cryptoguy.tech">
+                            <SocialIcon href="https://www.facebook.com/CRYPTOGUY.CO">
                                 <FacebookIcon className="w-6 h-6" />
                             </SocialIcon>
-                            <SocialIcon href="https://www.instagram.com/cryptoguytech/">
+                            <SocialIcon href="https://www.instagram.com/cryptoguy.io/">
                                 <InstagramIcon className="w-6 h-6" />
                             </SocialIcon>
                             <SocialIcon href="https://x.com/cryptoguy476335">
                                 <XIcon className="w-6 h-6" />
                             </SocialIcon>
-                            <SocialIcon href="https://chat.whatsapp.com/ENRVqPrrY4yHxSEW9xH6jn">
+                            <SocialIcon href="https://whatsapp.com/channel/0029VbCfQwq6xCSPYAxV591N">
                                 <WhatsAppIcon className="w-6 h-6" />
                             </SocialIcon>
                         </div>
