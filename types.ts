@@ -27,3 +27,25 @@ export interface Coin {
   total_volume: number | null;
   sparkline_in_7d: { price: number[] };
 }
+
+export type TimeRange = '7D' | '1M' | '3M' | 'YTD' | '1Y' | 'MAX';
+
+export interface ChartPoint {
+  index: number;
+  timestamp: number;
+  price: number;
+  formattedDate: string;
+  shortLabel: string;
+}
+
+export interface HistoricalPriceData {
+  timeRange: TimeRange;
+  points: ChartPoint[];
+  changePercent: number;
+  changeAmount: number;
+  highPrice: number;
+  lowPrice: number;
+  startPrice: number;
+  endPrice: number;
+  isSimulated?: boolean;
+}
